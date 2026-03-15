@@ -32,6 +32,10 @@
 #include "../../Minecraft.World/Headers/net.minecraft.world.item.crafting.h"
 #include "../GameState/Options.h"
 
+/* Cactus ModLoader Includes */
+#include "../../Cactus.ModLoader/Common/EventSystem/Events/Player/PlayerBlockBreakEvent.h"
+#include "../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+
 Random PlayerConnection::random;
 
 PlayerConnection::PlayerConnection(MinecraftServer* server,
@@ -447,6 +451,17 @@ void PlayerConnection::handlePlayerAction(
                 new TileUpdatePacket(x, y, z, level)));
 
     } else if (packet->action == PlayerActionPacket::STOP_DESTROY_BLOCK) {
+        /* CactusModLoader [IMPL-START] */
+        int tileId = level->getTile(x, y, z);
+        PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
+        EventBus::Get().fire(event);
+
+        if (event.isCancelled()) {
+            player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
+            return;
+        }
+        /* CactusModLoader [IMPL-END] */
+
         player->gameMode->stopDestroyBlock(x, y, z);
         server->getPlayers()->prioritiseTileChanges(
             x, y, z,

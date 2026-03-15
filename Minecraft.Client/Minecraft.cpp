@@ -101,6 +101,9 @@ TOUCHSCREENRECT QuickSelectRect[3] = {
 int QuickSelectBoxWidth[3] = {89, 111, 142};
 #endif
 
+/* Cactus ModLoader */
+Loader* Minecraft::modloader;
+
 Minecraft::Minecraft(Component* mouseComponent, Canvas* parent,
                      MinecraftApplet* minecraftApplet, int width, int height,
                      bool fullscreen) {

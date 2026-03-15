@@ -835,16 +835,20 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
                              minecraft->fpsString + L")",
                          iSafezoneXHalf + 2, 20, 0xffffff);
         font->drawShadow(
+            L"Cactus Modloader. " +
+                _toString<__int64>(Minecraft::modloader->mods_.size()+1) + L" mod(s) loaded", //+1 for base "mod"
+            iSafezoneXHalf + 2, 32 + 00, 0xffffff);
+        font->drawShadow(
             L"Seed: " +
                 _toString<__int64>(minecraft->level->getLevelData()->getSeed()),
-            iSafezoneXHalf + 2, 32 + 00, 0xffffff);
-        font->drawShadow(minecraft->gatherStats1(), iSafezoneXHalf + 2, 32 + 10,
+            iSafezoneXHalf + 2, 32 + 10, 0xffffff);
+        font->drawShadow(minecraft->gatherStats1(), iSafezoneXHalf + 2, 32 + 20,
                          0xffffff);
-        font->drawShadow(minecraft->gatherStats2(), iSafezoneXHalf + 2, 32 + 20,
+        font->drawShadow(minecraft->gatherStats2(), iSafezoneXHalf + 2, 32 + 30,
                          0xffffff);
-        font->drawShadow(minecraft->gatherStats3(), iSafezoneXHalf + 2, 32 + 30,
+        font->drawShadow(minecraft->gatherStats3(), iSafezoneXHalf + 2, 32 + 40,
                          0xffffff);
-        font->drawShadow(minecraft->gatherStats4(), iSafezoneXHalf + 2, 32 + 40,
+        font->drawShadow(minecraft->gatherStats4(), iSafezoneXHalf + 2, 32 + 50,
                          0xffffff);
 
         // TERRAIN FEATURES

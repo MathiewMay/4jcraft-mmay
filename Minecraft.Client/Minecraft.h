@@ -1,4 +1,8 @@
 #pragma once
+
+/* Cactus ModLoader Includes */
+#include "../../../Cactus.ModLoader/Loader.h"
+
 class Timer;
 class MultiPlayerLevel;
 class LevelRenderer;
@@ -48,6 +52,9 @@ class PsPlusUpsellWrapper;
 
 class Minecraft {
 public:
+    /* Cactus ModLoader */
+    static Loader* modloader;
+
     static const std::wstring VERSION_STRING;
     Minecraft(Component* mouseComponent, Canvas* parent,
               MinecraftApplet* minecraftApplet, int width, int height,

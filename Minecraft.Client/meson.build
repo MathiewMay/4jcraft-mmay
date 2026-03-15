@@ -57,6 +57,7 @@ client_dependencies = [
     thread_dep,
     thread_dep,
     dependency('zlib'),
+    cml_dep,
 ]
 
 if get_option('enable_vsync')

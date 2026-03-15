@@ -21,6 +21,21 @@ sdl2_dep   = dependency('sdl2') # Yes.. i know sdl3 is out, but there's not poin
                                 # someone is gonna ask me "Hey juicey can you make it SDL3?" and i'd be like fuck you and still do it.
 thread_dep = dependency('threads')
 
+lua_dep = dependency('lua-5.4', required: false)
+if not lua_dep.found()
+  lua_dep = dependency('lua5.4', required: false)
+endif
+if not lua_dep.found()
+  lua_dep = dependency('lua54', required: false)
+endif
+if not lua_dep.found()
+  lua_dep = dependency('lua', required: true)
+endif
+
+if not lua_dep.found()
+  error('Could not find lua, make sure it is installed, (lua 5.4)')
+endif
+
 # compile flags (chagne ts juicey)
 global_cpp_args = [
   '-fpermissive',
@@ -50,6 +65,7 @@ subdir('4J.Render')
 subdir('4J.Input')
 subdir('4J.Profile')
 subdir('4J.Storage')
+subdir('Cactus.ModLoader')
 subdir('Minecraft.Assets')
 subdir('Minecraft.World')
 subdir('Minecraft.Client')

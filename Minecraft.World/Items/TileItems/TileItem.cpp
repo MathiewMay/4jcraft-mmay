@@ -16,6 +16,10 @@
 #include <xuiresource.h>
 #include <xuiapp.h>
 
+/* Cactus ModLoader */
+#include "../../../Cactus.ModLoader/Common/EventSystem/Events/Player/PlayerBlockPlaceEvent.h"
+#include "../../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+
 TileItem::TileItem(int id) : Item(id) {
     this->tileId = id + 256;
     itemIcon = NULL;
@@ -75,6 +79,17 @@ bool TileItem::useOn(std::shared_ptr<ItemInstance> instance,
             int dataValue = Tile::tiles[tileId]->getPlacedOnFaceDataValue(
                 level, x, y, z, face, clickX, clickY, clickZ, itemValue);
             if (level->setTileAndData(x, y, z, tileId, dataValue)) {
+                /* CactusModLoader [EVENT-IMPL] */
+                ServerPlayer* serverPlayer = dynamic_cast<ServerPlayer*>(player.get());
+                PlayerBlockPlaceEvent event(serverPlayer, x, y, z, tileId);
+                EventBus::Get().fire(event);
+
+                if (event.isCancelled()) {
+                    level->setTile(x,y,z,0);
+                    return false;
+                }
+                /* CactusModLoader [EVENT-IMPL-END] */
+
                 // 4J-JEV: Snow/Iron Golems do not have owners apparently.
                 int newTileId = level->getTile(x, y, z);
                 if ((tileId == Tile::pumpkin_Id ||

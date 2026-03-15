@@ -10,6 +10,10 @@
 #include <signal.h>
 #include <execinfo.h>
 #include <unistd.h>
+
+/* Cactus ModLoader Includes */
+#include "../../../Cactus.ModLoader/Loader.h"
+
 static void sigsegv_handler(int sig) {
     const char msg[] = "\n=== SIGNAL CAUGHT: ";
     write(STDERR_FILENO, msg, sizeof(msg)-1);
@@ -572,8 +576,16 @@ int StartMinecraftThreadProc( void* lpParameter )
     return 0;
 }
 
+/* Cactus ModLoader */
+Loader loader;
+
 int main(int argc, const char *argv[] )
 {
+    loader.collectMods();
+    loader.loadMods();
+
+    Minecraft::modloader = &loader;
+
 #if defined(__linux__) && defined(__GLIBC__)
     struct sigaction sa;
     sa.sa_handler = sigsegv_handler;
