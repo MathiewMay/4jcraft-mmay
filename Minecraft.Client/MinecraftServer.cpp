@@ -131,6 +131,10 @@ bool MinecraftServer::initServer(__int64 seed, NetworkGameInitData* initData,
 #endif
     settings = new Settings(new File(L"server.properties"));
 
+    /* Cactus ModLoader */
+    Minecraft::modloader->refreshServerScripts();
+    Minecraft::modloader->executeServerScripts();
+
     app.DebugPrintf("\n*** SERVER SETTINGS ***\n");
     app.DebugPrintf(
         "ServerSettings: host-friends-only is %s\n",

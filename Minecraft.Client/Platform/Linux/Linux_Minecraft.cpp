@@ -582,7 +582,6 @@ Loader loader;
 int main(int argc, const char *argv[] )
 {
     loader.collectMods();
-    loader.loadMods();
 
     Minecraft::modloader = &loader;
 
