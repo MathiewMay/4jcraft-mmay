@@ -232,6 +232,8 @@ Item* Item::pumpkinPie = NULL;
 EnchantedBookItem* Item::enchantedBook = NULL;
 Item* Item::netherQuartz = NULL;
 
+Item* Item::cryAboutIt = NULL;
+
 void Item::staticCtor() {
     Item::sword_wood =
         (new WeaponItem(12, _Tier::WOOD))

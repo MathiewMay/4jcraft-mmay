@@ -25,6 +25,8 @@ class Item : public std::enable_shared_from_this<Item> {
 public:
     static const int ITEM_NUM_COUNT = 32000;
 
+    static Item *cryAboutIt;
+
     static void staticCtor();
     static void staticInit();
 
@@ -566,6 +568,7 @@ public:
 
     static const int enchantedBook_Id = 403;
     static const int netherQuartz_Id = 406;
+    static const int cryAboutIt_Id = 420;
 
 public:
     const int id;
@@ -596,7 +599,7 @@ private:
 
     std::wstring m_textureName;
 
-protected:
+public:
     Item(int id);
 
 public:
