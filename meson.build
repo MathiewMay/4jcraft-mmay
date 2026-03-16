@@ -1,15 +1,22 @@
 project('4jcraft-chucklegrounds', ['cpp', 'c'],
-  version : '0.1.0',
-  meson_version: '>= 1.1',
-  default_options : [
-    'cpp_std=c++26',
-    'warning_level=0',
-    'buildtype=debug', # for now
-    'unity=on', # merge source files per target
-    'unity_size=8', # TODO: mess around with this
-    'b_pch=true', # precompiled headers
-  ],
+        version : '0.1.0',
+        meson_version: '>= 1.1',
+        default_options : [
+          'cpp_std=c++23',
+          'warning_level=0',
+          'buildtype=debug', # for now
+          'unity=on', # merge source files per target
+          'unity_size=8', # TODO: mess around with this
+          'b_pch=true', # precompiled headers
+        ],
 )
+
+fs = import('fs')
+
+if fs.is_dir('/usr/include/lua5.4')
+  message('Falling back to manual lua project argument')
+  add_project_arguments('-I/usr/include/lua5.4', language: ['c', 'cpp'])
+endif
 
 pymod = import('python')
 python = pymod.find_installation('python3', required: true)
@@ -20,23 +27,15 @@ cc = meson.get_compiler('cpp')
 gl_dep     = dependency('gl')
 glu_dep    = dependency('glu')
 sdl2_dep   = dependency('sdl2') # Yes.. i know sdl3 is out, but there's not point upgrading right now except when
-                                # someone is gonna ask me "Hey juicey can you make it SDL3?" and i'd be like fuck you and still do it.
+# someone is gonna ask me "Hey juicey can you make it SDL3?" and i'd be like fuck you and still do it.
 thread_dep = dependency('threads')
 
-lua_dep = dependency('lua-5.4', required: false)
-if not lua_dep.found()
-  lua_dep = dependency('lua5.4', required: false)
-endif
-if not lua_dep.found()
-  lua_dep = dependency('lua54', required: false)
-endif
-if not lua_dep.found()
-  lua_dep = dependency('lua', required: true)
-endif
-
-if not lua_dep.found()
-  error('Could not find lua, make sure it is installed, (lua 5.4)')
-endif
+lua_names = ['lua-5.4','lua5.4','lua54','lua'] # throw dem bitches in a list
+lua_dep = dependency(
+  lua_names,
+  required: true,
+  not_found_message: 'Could not find lua, make sure it is installed, (lua 5.4)'
+)
 
 # compile flags (chagne ts juicey)
 global_cpp_args = [
