@@ -2582,7 +2582,7 @@ Can also be used for low-level lighting.</value>
 	</data>	
 
 	<data name="IDS_ITEM_STICK">
-		<value>FUCK</value>
+		<value>Stick</value>
 	</data>	
 
 	<data name="IDS_ITEM_BOWL">
