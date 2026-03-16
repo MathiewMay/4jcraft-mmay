@@ -14,10 +14,12 @@
 #include "MapItem.h"
 #include "Item.h"
 #include "HangingEntityItem.h"
-#include "../../Cactus.ModLoader/Common/EventSystem/Events/Item/ItemInteractEntityEvent.h"
-#include "../../Cactus.ModLoader/Common/EventSystem/Events/Item/ItemInteractEvent.h"
-#include "../../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+
 #include "../../Minecraft.Client/Level/ServerLevel.h"
+/* Cactus ModLoader Includes */
+#include "../../Cactus.ModLoader/Server/Events/Item/ItemInteractEntityEvent.h"
+#include "../../Cactus.ModLoader/Server/Events/Item/ItemInteractEvent.h"
+#include "../../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
 
 typedef Item::Tier _Tier;
 

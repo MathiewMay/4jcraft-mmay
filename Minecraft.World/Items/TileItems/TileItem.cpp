@@ -16,9 +16,9 @@
 #include <xuiresource.h>
 #include <xuiapp.h>
 
-/* Cactus ModLoader */
-#include "../../../Cactus.ModLoader/Common/EventSystem/Events/Player/PlayerBlockPlaceEvent.h"
-#include "../../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+/* Cactus ModLoader Includes */
+#include "../Cactus.ModLoader/Server/Events/Player/PlayerBlockPlaceEvent.h"
+#include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
 
 TileItem::TileItem(int id) : Item(id) {
     this->tileId = id + 256;
