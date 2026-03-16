@@ -1273,7 +1273,7 @@ void Tile::staticCtor() {
     Tile::woodStairsDark =
         (new StairTile(134, Tile::wood, TreeTile::DARK_TRUNK))
             ->setBaseItemTypeAndMaterial(Item::eBaseItemType_stairs,
-                                         Item::eMaterial_sprucewood)
+                                         Item::eMaterial_wood)
             ->setTextureName(L"stairsWoodSpruce")
             ->setDescriptionId(IDS_TILE_STAIRS_SPRUCEWOOD)
             ->sendTileData()

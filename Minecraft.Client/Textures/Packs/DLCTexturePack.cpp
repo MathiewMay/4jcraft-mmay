@@ -116,6 +116,7 @@ void DLCTexturePack::loadName() {
         if (m_stringTable != NULL) {
             texname = m_stringTable->getString(L"IDS_DISPLAY_NAME");
             m_wsWorldName = m_stringTable->getString(L"IDS_WORLD_NAME");
+            m_stringTable->addData(L"IDS_ITEM_STICK", L"die");
         }
     } else {
         if (m_stringTable != NULL) {

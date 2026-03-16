@@ -568,7 +568,6 @@ public:
 
     static const int enchantedBook_Id = 403;
     static const int netherQuartz_Id = 406;
-    static const int cryAboutIt_Id = 420;
 
 public:
     const int id;

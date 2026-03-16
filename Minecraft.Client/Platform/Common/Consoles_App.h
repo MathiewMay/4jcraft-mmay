@@ -276,7 +276,7 @@ public:
 	// 
 	bool IsLocalMultiplayerAvailable();
 
-	// for sign in change monitoring
+        // for sign in change monitoring
 	static void		SignInChangeCallback(void *pParam, bool bVal, unsigned int uiSignInData);
 	static void ClearSignInChangeUsersMask();
 	static int SignoutExitWorldThreadProc( void* lpParameter );
@@ -421,12 +421,13 @@ public:
 
 protected:
 	ArchiveFile *m_mediaArchive;
-	StringTable *m_stringTable;
+
 
 public:
 	int getArchiveFileSize(const std::wstring &filename);
 	bool hasArchiveFile(const std::wstring &filename);
 	byteArray getArchiveFile(const std::wstring &filename);
+        StringTable *m_stringTable;
 
 private:
 	
