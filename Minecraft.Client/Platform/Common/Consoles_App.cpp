@@ -1330,6 +1330,8 @@ void CMinecraftApp::ActionGameSettings(int iPad,eGameSetting eVal)
 	case eGameSetting_PSVita_NetworkModeAdhoc:
 		//nothing to do here
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3811,6 +3813,8 @@ void CMinecraftApp::HandleXuiActions(void)
 				}
 
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -3993,6 +3997,8 @@ void CMinecraftApp::HandleXuiActions(void)
 				// 					app.ApplyGameSettingsChanged(ProfileManager.GetPrimaryPad());
 				// 					app.NavigateToScene(ProfileManager.GetPrimaryPad(),eUIScene_MultiGameJoinLoad);
 				// 				}
+				break;
+			default:
 				break;
 			}
 		}
@@ -5288,8 +5294,8 @@ int CMinecraftApp::DLCMountedCallback(void *pParam,int iPad,std::uint32_t dwErr,
 	 m_Time.qwAppTime.QuadPart += qwDeltaTime.QuadPart;    
 	 m_Time.qwTime.QuadPart     = qwNewTime.QuadPart;
 
-	 m_Time.fElapsedTime      = m_Time.fSecsPerTick * ((FLOAT)(qwDeltaTime.QuadPart));
-	 m_Time.fAppTime          = m_Time.fSecsPerTick * ((FLOAT)(m_Time.qwAppTime.QuadPart));    
+	 m_Time.fElapsedTime      = m_Time.fSecsPerTick * static_cast<float>(qwDeltaTime.QuadPart);
+	 m_Time.fAppTime          = m_Time.fSecsPerTick * static_cast<float>(m_Time.qwAppTime.QuadPart);
  }
 
 
@@ -5322,7 +5328,7 @@ bool CMinecraftApp::isXuidDeadmau5(PlayerUID xuid)
 	return false;
 }
 
-void CMinecraftApp::AddMemoryTextureFile(const std::wstring &wName, std::uint8_t *pbData, unsigned int dwBytes)	
+void CMinecraftApp::AddMemoryTextureFile(const std::wstring &wName, std::uint8_t *pbData, unsigned int byteCount)	
 {	
 	EnterCriticalSection(&csMemFilesLock);
 	// check it's not already in
@@ -5335,13 +5341,13 @@ void CMinecraftApp::AddMemoryTextureFile(const std::wstring &wName, std::uint8_t
 #endif
 		pData = (*it).second;
 
-		if(pData->dwBytes == 0 && dwBytes != 0)
+		if(pData->byteCount == 0 && byteCount != 0)
 		{
-			// This should never be NULL if dwBytes is 0
+			// This should never be NULL if byteCount is 0
 			if(pData->pbData!=NULL) delete [] pData->pbData;
 
 			pData->pbData=pbData;
-			pData->dwBytes=dwBytes;
+			pData->byteCount=byteCount;
 		}
 
 		++pData->ucRefCount;
@@ -5356,10 +5362,9 @@ void CMinecraftApp::AddMemoryTextureFile(const std::wstring &wName, std::uint8_t
 
 	// add this texture to the list of memory texture files - it will then be picked up by the level renderer's AddEntity
 
-	pData = (PMEMDATA)new BYTE[sizeof(MEMDATA)];
-	ZeroMemory( pData, sizeof(MEMDATA) );
+	pData = new MEMDATA();
 	pData->pbData=pbData;
-	pData->dwBytes=dwBytes;
+	pData->byteCount=byteCount;
 	pData->ucRefCount = 1;
 
 	// use the xuid to access the skin data
@@ -5385,7 +5390,7 @@ void CMinecraftApp::RemoveMemoryTextureFile(const std::wstring &wName)
 #ifndef _CONTENT_PACKAGE
 			wprintf(L"Erasing the memory texture file data for %ls\n", wName.c_str());
 #endif
-			delete [] pData;
+			delete pData;
 			m_MEM_Files.erase(wName);
 		}
 	}
@@ -5417,7 +5422,7 @@ bool CMinecraftApp::IsFileInMemoryTextures(const std::wstring &wName)
 	return val;
 }
 
-void CMinecraftApp::GetMemFileDetails(const std::wstring &wName, std::uint8_t **ppbData, unsigned int *pdwBytes)
+void CMinecraftApp::GetMemFileDetails(const std::wstring &wName, std::uint8_t **ppbData, unsigned int *pByteCount)
 {
 	EnterCriticalSection(&csMemFilesLock);
 	AUTO_VAR(it, m_MEM_Files.find(wName));
@@ -5425,12 +5430,12 @@ void CMinecraftApp::GetMemFileDetails(const std::wstring &wName, std::uint8_t **
 	{
 		PMEMDATA pData = (*it).second;
 		*ppbData=pData->pbData;
-		*pdwBytes=pData->dwBytes;
+		*pByteCount=pData->byteCount;
 	}
 	LeaveCriticalSection(&csMemFilesLock);
 }
 
-void CMinecraftApp::AddMemoryTPDFile(int iConfig, std::uint8_t *pbData, unsigned int dwBytes)	
+void CMinecraftApp::AddMemoryTPDFile(int iConfig, std::uint8_t *pbData, unsigned int byteCount)	
 {	
 	EnterCriticalSection(&csMemTPDLock);
 	// check it's not already in
@@ -5438,10 +5443,9 @@ void CMinecraftApp::AddMemoryTPDFile(int iConfig, std::uint8_t *pbData, unsigned
 	AUTO_VAR(it, m_MEM_TPD.find(iConfig));
 	if(it == m_MEM_TPD.end())
 	{	
-		pData = (PMEMDATA)new BYTE[sizeof(MEMDATA)];
-		ZeroMemory( pData, sizeof(MEMDATA) );
+		pData = new MEMDATA();
 		pData->pbData=pbData;
-		pData->dwBytes=dwBytes;
+		pData->byteCount=byteCount;
 		pData->ucRefCount = 1;
 
 		m_MEM_TPD[iConfig]=pData;
@@ -5459,7 +5463,7 @@ void CMinecraftApp::RemoveMemoryTPDFile(int iConfig)
 	if(it != m_MEM_TPD.end())
 	{
 		pData=m_MEM_TPD[iConfig];
-		delete [] pData;
+		delete pData;
 		m_MEM_TPD.erase(iConfig);
 	}
 
@@ -5519,7 +5523,7 @@ bool CMinecraftApp::IsFileInTPD(int iConfig)
 	return val;
 }
 
-void CMinecraftApp::GetTPD(int iConfig, std::uint8_t **ppbData, unsigned int *pdwBytes)
+void CMinecraftApp::GetTPD(int iConfig, std::uint8_t **ppbData, unsigned int *pByteCount)
 {
 	EnterCriticalSection(&csMemTPDLock);
 	AUTO_VAR(it, m_MEM_TPD.find(iConfig));
@@ -5527,7 +5531,7 @@ void CMinecraftApp::GetTPD(int iConfig, std::uint8_t **ppbData, unsigned int *pd
 	{
 		PMEMDATA pData = (*it).second;
 		*ppbData=pData->pbData;
-		*pdwBytes=pData->dwBytes;
+		*pByteCount=pData->byteCount;
 	}
 	LeaveCriticalSection(&csMemTPDLock);
 }
@@ -6102,7 +6106,7 @@ std::wstring CMinecraftApp::FormatHTMLString(int iPad, const std::wstring &desc,
 #endif // _XBOX
 
 	// Fix for #8903 - UI: Localization: KOR/JPN/CHT: Button Icons are rendered with padding space, which looks no good	
-	DWORD dwLanguage = XGetLanguage( );
+	std::uint32_t dwLanguage = XGetLanguage( );
 	switch(dwLanguage)
 	{
 	case XC_LANGUAGE_KOREAN:	
@@ -7517,6 +7521,8 @@ void CMinecraftApp::SetGameHostOption(unsigned int &uiHostSettings, eGameHostOpt
 	case eGameHostOption_All:
 		uiHostSettings=uiVal;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -7590,7 +7596,9 @@ unsigned int CMinecraftApp::GetGameHostOption(unsigned int uiHostSettings, eGame
 		break;
 	case eGameHostOption_DisableSaving:
 		return (uiHostSettings&GAME_HOST_OPTION_BITMASK_DISABLESAVE);
-		break;		
+		break;
+	default:
+		return 0;
 	}
 
 	return false;
@@ -7923,6 +7931,8 @@ std::wstring CMinecraftApp::getEntityName(eINSTANCEOF type)
 		// 4J-PB - fix for #107167 - Customer Encountered: TU12: Content: UI: There is no information what killed Player after being slain by Iron Golem.
 	case eTYPE_VILLAGERGOLEM:
 		return app.GetString(IDS_IRONGOLEM);
+	default:
+		break;
 
 	};
 
@@ -8337,14 +8347,14 @@ int CMinecraftApp::TMSPPFileReturned(void *pParam,int iPad,int iUserData,C4JStor
 				case e_DLC_TexturePackData:
 					{					
 						// 4J-PB - we need to allocate memory for the file data and copy into it, since the current data is a reference into the blob download memory
-						std::uint8_t *pbData = new std::uint8_t[pFileData->dwSize];
-						memcpy(pbData,pFileData->pbData,pFileData->dwSize);
+						std::uint8_t *pbData = new std::uint8_t[pFileData->size];
+						memcpy(pbData,pFileData->pbData,pFileData->size);
 
 						pClass->m_vTMSPPData.push_back(pbData);
 						app.DebugPrintf("Got texturepack data\n");
 						// get the config value for the texture pack
 						int iConfig=app.GetTPConfigVal(pCurrent->wchFilename);
-						app.AddMemoryTPDFile(iConfig, pbData, pFileData->dwSize);					
+						app.AddMemoryTPDFile(iConfig, pbData, pFileData->size);					
 					}
 					break;
 				default:
@@ -8352,12 +8362,12 @@ int CMinecraftApp::TMSPPFileReturned(void *pParam,int iPad,int iUserData,C4JStor
 					if(pFileData->pbData[0]==0x89)
 					{				
 						// 4J-PB - we need to allocate memory for the file data and copy into it, since the current data is a reference into the blob download memory
- 						std::uint8_t *pbData = new std::uint8_t[pFileData->dwSize];
- 						memcpy(pbData,pFileData->pbData,pFileData->dwSize);
+ 						std::uint8_t *pbData = new std::uint8_t[pFileData->size];
+ 						memcpy(pbData,pFileData->pbData,pFileData->size);
  
  						pClass->m_vTMSPPData.push_back(pbData);
 						app.DebugPrintf("Got image data - %ls\n",pCurrent->wchFilename);
-						app.AddMemoryTextureFile(pCurrent->wchFilename, pbData, pFileData->dwSize);
+						app.AddMemoryTextureFile(pCurrent->wchFilename, pbData, pFileData->size);
 					}
 					else
 					{
@@ -8374,12 +8384,12 @@ int CMinecraftApp::TMSPPFileReturned(void *pParam,int iPad,int iUserData,C4JStor
 						app.DebugPrintf("--- Got texturepack data %ls\n",pCurrent->wchFilename);
 						// get the config value for the texture pack
 						int iConfig=app.GetTPConfigVal(pCurrent->wchFilename);
-						app.AddMemoryTPDFile(iConfig, pFileData->pbData, pFileData->dwSize);					
+						app.AddMemoryTPDFile(iConfig, pFileData->pbData, pFileData->size);					
 					}
 					break;
 				default:
 					app.DebugPrintf("--- Got image data - %ls\n",pCurrent->wchFilename);
-					app.AddMemoryTextureFile(pCurrent->wchFilename, pFileData->pbData, pFileData->dwSize);
+					app.AddMemoryTextureFile(pCurrent->wchFilename, pFileData->pbData, pFileData->size);
 					break;
 				}
 #endif

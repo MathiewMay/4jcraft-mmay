@@ -353,13 +353,13 @@ int C_4JInput::GetHotbarSlotPressed(int iPad) {
     case ACTION_MENU_PAGEDOWN:                                                 \
         return KFN(SDL_SCANCODE_PAGEDOWN);                                     \
     case ACTION_MENU_OK:                                                       \
-        return KFN(SDL_SCANCODE_RETURN) || CFN(SDL_CONTROLLER_BUTTON_A);       \
+        return KFN(SDL_SCANCODE_RETURN) || KFN(SDL_SCANCODE_Z) || CFN(SDL_CONTROLLER_BUTTON_A);       \
     case ACTION_MENU_CANCEL:                                                   \
-        return KFN(SDL_SCANCODE_ESCAPE) || CFN(SDL_CONTROLLER_BUTTON_B);       \
+        return KFN(SDL_SCANCODE_ESCAPE) || KFN(SDL_SCANCODE_X) || CFN(SDL_CONTROLLER_BUTTON_B);       \
     case ACTION_MENU_A:                                                        \
-        return KFN(SDL_SCANCODE_Z) || CFN(SDL_CONTROLLER_BUTTON_A);            \
+        return KFN(SDL_SCANCODE_Z) || KFN(SDL_SCANCODE_RETURN) || CFN(SDL_CONTROLLER_BUTTON_A);            \
     case ACTION_MENU_B:                                                        \
-        return KFN(SDL_SCANCODE_X) || CFN(SDL_CONTROLLER_BUTTON_B);            \
+        return KFN(SDL_SCANCODE_X) || KFN(SDL_SCANCODE_ESCAPE) || CFN(SDL_CONTROLLER_BUTTON_B);            \
     case ACTION_MENU_X:                                                        \
         return KFN(SDL_SCANCODE_C) || CFN(SDL_CONTROLLER_BUTTON_X);            \
     case ACTION_MENU_Y:                                                        \
@@ -572,7 +572,7 @@ void C_4JInput::SetJoypadStickAxisMap(int, unsigned int, unsigned int) {}
 void C_4JInput::SetJoypadStickTriggerMap(int, unsigned int, unsigned int) {}
 void C_4JInput::SetKeyRepeatRate(float, float) {}
 void C_4JInput::SetDebugSequence(const char*, int (*)(void*), void*) {}
-FLOAT C_4JInput::GetIdleSeconds(int) { return 0.f; }
+float C_4JInput::GetIdleSeconds(int) { return 0.f; }
 bool C_4JInput::IsPadConnected(int iPad) { return iPad == 0; }
 
 // Silly check, we check if we have a keyboard.

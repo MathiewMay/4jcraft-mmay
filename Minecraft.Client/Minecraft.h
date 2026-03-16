@@ -271,6 +271,8 @@ public:
 
     void pauseGame();
     //    void toggleFullScreen();	// 4J - removed
+    bool pollResize();
+
 private:
     void resize(int width, int height);
 
