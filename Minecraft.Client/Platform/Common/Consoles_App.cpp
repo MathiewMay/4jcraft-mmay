@@ -4112,6 +4112,9 @@ void CMinecraftApp::loadStringTable()
 	{
 		byteArray locFile = m_mediaArchive->getFile(localisationFile);
 		m_stringTable = new StringTable(locFile.data, locFile.length);
+
+	        Minecraft::modloader->changeLang(*m_stringTable);
+
 		delete[] locFile.data;
 	}
 	else
@@ -4128,7 +4131,7 @@ int CMinecraftApp::PrimaryPlayerSignedOutReturned(void *pParam,int iPad,const C4
 	//CMinecraftApp* pApp = (CMinecraftApp*)pParam;
 	//Minecraft *pMinecraft=Minecraft::GetInstance();
 
-	// if the player is null, we're in the menus
+	// if the player is null, we're in the menusz
 	//if(Minecraft::GetInstance()->player!=NULL)
 
 	// We always create a session before kicking of any of the game code, so even though we may still be joining/creating a game

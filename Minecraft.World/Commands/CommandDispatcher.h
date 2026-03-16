@@ -3,6 +3,8 @@
 class Command;
 class CommandSender;
 
+#include "../Commands/CommandsEnum.h"
+
 class CommandDispatcher {
 private:
 #ifdef __ORBIS__

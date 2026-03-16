@@ -61,6 +61,8 @@ public:
     ~StringTable(void);
 
     void getData(std::uint8_t** ppData, unsigned int* pSize);
+    void addData(int id, std::wstring data);
+    void printData();
 
     const wchar_t* getString(const std::wstring& id);
     const wchar_t* getString(int id);

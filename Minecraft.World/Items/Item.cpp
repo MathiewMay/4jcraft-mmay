@@ -14,6 +14,10 @@
 #include "MapItem.h"
 #include "Item.h"
 #include "HangingEntityItem.h"
+#include "../../Cactus.ModLoader/Common/EventSystem/Events/Item/ItemInteractEntityEvent.h"
+#include "../../Cactus.ModLoader/Common/EventSystem/Events/Item/ItemInteractEvent.h"
+#include "../../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "../../Minecraft.Client/Level/ServerLevel.h"
 
 typedef Item::Tier _Tier;
 
@@ -1301,6 +1305,12 @@ bool Item::TestUse(Level* level, std::shared_ptr<Player> player) {
 std::shared_ptr<ItemInstance> Item::use(
     std::shared_ptr<ItemInstance> itemInstance, Level* level,
     std::shared_ptr<Player> player) {
+    /* CactusModLoader [EVENT-IMPL] */
+    ServerPlayer* serverPlayer = dynamic_cast<ServerPlayer*>(player.get());
+    ServerLevel* serverLevel = dynamic_cast<ServerLevel*>(level);
+    ItemInteractEvent event(*itemInstance, serverLevel, *serverPlayer);
+    EventBus::Get().fire(event);
+     /* CactusModLoader [EVENT-IMPL-END] */
     return itemInstance;
 }
 

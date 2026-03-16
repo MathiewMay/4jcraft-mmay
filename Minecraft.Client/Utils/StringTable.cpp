@@ -113,6 +113,27 @@ void StringTable::getData(std::uint8_t** ppData, unsigned int* pSize) {
     *pSize = src.length;
 }
 
+//Cactus modloader: yo FUCK 4j i hate you why the FUCK is wstring EVERYWHERE
+void StringTable::addData(int id, std::wstring data) {
+    if (id >= m_stringsVec.size()) {
+        m_stringsVec.resize(id + 1);
+    }
+    m_stringsVec[id] = data;
+}
+
+void StringTable::printData() {
+    for (auto string : m_stringsMap) {
+        using convert_type = std::codecvt_utf8<wchar_t>;
+        std::wstring_convert<convert_type, wchar_t> converter;
+        app.DebugPrintf("first value:\n");
+        app.DebugPrintf(converter.to_bytes(string.first).c_str());
+        app.DebugPrintf("\n");
+        app.DebugPrintf("second value:\n");
+        app.DebugPrintf(converter.to_bytes(string.second).c_str());
+        app.DebugPrintf("\n");
+    }
+}
+
 const wchar_t* StringTable::getString(const std::wstring& id) {
 #ifndef _CONTENT_PACKAGE
     if (isStatic) {
