@@ -1,14 +1,14 @@
 project('4jcraft-chucklegrounds', ['cpp', 'c'],
-        version : '0.1.0',
-        meson_version: '>= 1.1',
-        default_options : [
-          'cpp_std=c++23',
-          'warning_level=0',
-          'buildtype=debug', # for now
-          'unity=on', # merge source files per target
-          'unity_size=8', # TODO: mess around with this
-          'b_pch=true', # precompiled headers
-        ],
+  version : '0.1.0',
+  meson_version: '>= 1.1',
+  default_options : [
+    'cpp_std=c++23',
+    'warning_level=0',
+    'buildtype=debug', # for now
+    'unity=on', # merge source files per target
+    'unity_size=8', # TODO: mess around with this
+    'b_pch=true', # precompiled headers
+  ],
 )
 
 fs = import('fs')
@@ -27,7 +27,7 @@ cc = meson.get_compiler('cpp')
 gl_dep     = dependency('gl')
 glu_dep    = dependency('glu')
 sdl2_dep   = dependency('sdl2') # Yes.. i know sdl3 is out, but there's not point upgrading right now except when
-# someone is gonna ask me "Hey juicey can you make it SDL3?" and i'd be like fuck you and still do it.
+                                # someone is gonna ask me "Hey juicey can you make it SDL3?" and i'd be like fuck you and still do it.
 thread_dep = dependency('threads')
 
 lua_names = ['lua-5.4','lua5.4','lua54','lua'] # throw dem bitches in a list
