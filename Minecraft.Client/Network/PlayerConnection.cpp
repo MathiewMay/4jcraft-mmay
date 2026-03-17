@@ -36,6 +36,7 @@
 #include "Server/Events/Player/PlayerBlockBreakEvent.h"
 #include "Common/EventSystem/EventBus.h"
 #include "Server/Events/Player/PlayerBlockPlaceEvent.h"
+#include "Common/CactusUtils.h"
 
 Random PlayerConnection::random;
 
@@ -522,15 +523,23 @@ void PlayerConnection::handleUseItem(std::shared_ptr<UseItemPacket> packet) {
                               // server->players->isOp(player->name);
 
     /* CactusModLoader [IMPL-START] */
-    if (packet->getFace() != 255 && item != NULL && item->id > 0 && item->id < 256) {
-        PlayerBlockPlaceEvent event(player.get(), x, y, z, level->getTile(x, y, z));
-        EventBus::Get().fire(event);
+    if (item != NULL && item->id > 0) {
+        Item* itemBase = Item::items[item->id];
+        if (isPlaceableItem(itemBase)) {
+            PlayerBlockPlaceEvent event(player.get(), x, y, z, level->getTile(x, y, z));
+            EventBus::Get().fire(event);
 
-        if (event.isCancelled()) {
-            player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
-            player->connection->send(std::make_shared<TileUpdatePacket>(x + Facing::STEP_X[face], y + Facing::STEP_Y[face], z + Facing::STEP_Z[face], level));
-            player->refreshContainer(player->containerMenu);
-            return;
+            if (event.isCancelled()) {
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y + 1, z, level)); // top
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y - 1, z, level)); // bottom
+                player->connection->send(std::make_shared<TileUpdatePacket>(x + 1, y, z, level)); // right
+                player->connection->send(std::make_shared<TileUpdatePacket>(x - 1, y, z, level)); // left
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z + 1, level)); // front
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z - 1, level)); // back
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));     // self
+                player->refreshContainer(player->containerMenu);
+                return;
+            }
         }
     }
     /* CactusModLoader [IMPL-END] */
