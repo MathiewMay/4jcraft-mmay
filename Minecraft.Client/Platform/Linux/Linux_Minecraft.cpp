@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 /* Cactus ModLoader Includes */
-#include "../../../Cactus.ModLoader/Loader.h"
+#include "Loader.h"
 
 static void sigsegv_handler(int sig) {
     const char msg[] = "\n=== SIGNAL CAUGHT: ";

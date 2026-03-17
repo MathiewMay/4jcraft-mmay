@@ -17,7 +17,6 @@
 
 #include "../../Minecraft.Client/Level/ServerLevel.h"
 /* Cactus ModLoader Includes */
-#include "../../Cactus.ModLoader/Server/Events/Item/ItemInteractEntityEvent.h"
 #include "../../Cactus.ModLoader/Server/Events/Item/ItemInteractEvent.h"
 #include "../../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
 
@@ -237,8 +236,6 @@ Item* Item::pumpkinPie = NULL;
 
 EnchantedBookItem* Item::enchantedBook = NULL;
 Item* Item::netherQuartz = NULL;
-
-Item* Item::cryAboutIt = NULL;
 
 void Item::staticCtor() {
     Item::sword_wood =

@@ -32,8 +32,8 @@
 #endif
 
 /* Cactus ModLoader Includes */
-#include "../Cactus.ModLoader/Server/Events/Player/PlayerJoinEvent.h"
-#include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "Server/Events/Player/PlayerJoinEvent.h"
+#include "Common/EventSystem/EventBus.h"
 
 // 4J - this class is fairly substantially altered as there didn't seem any
 // point in porting code for banning, whitelisting, ops etc.

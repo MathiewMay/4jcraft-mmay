@@ -24,9 +24,6 @@ class EnchantedBookItem;
 class Item : public std::enable_shared_from_this<Item> {
 public:
     static const int ITEM_NUM_COUNT = 32000;
-
-    static Item *cryAboutIt;
-
     static void staticCtor();
     static void staticInit();
 

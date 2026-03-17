@@ -33,8 +33,9 @@
 #include "../GameState/Options.h"
 
 /* Cactus ModLoader Includes */
-#include "../Cactus.ModLoader/Server/Events/Player/PlayerBlockBreakEvent.h"
-#include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "Server/Events/Player/PlayerBlockBreakEvent.h"
+#include "Common/EventSystem/EventBus.h"
+#include "Server/Events/Player/PlayerBlockPlaceEvent.h"
 
 Random PlayerConnection::random;
 
@@ -444,6 +445,21 @@ void PlayerConnection::handlePlayerAction(
     delete spawnPos;
     if (xd > zd) zd = xd;
     if (packet->action == PlayerActionPacket::START_DESTROY_BLOCK) {
+        /* CactusModLoader [IMPL-START] */
+        int tileId = level->getTile(x, y, z);
+        bool isInstantBreak = player->gameMode->isCreative() || (tileId > 0 && Tile::tiles[tileId]->getDestroySpeed(level, x, y, z) == 0.0f);
+
+        if (isInstantBreak){
+            PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
+            EventBus::Get().fire(event);
+
+            if (event.isCancelled()) {
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
+                return;
+            }
+        }
+        /* CactusModLoader [IMPL-END] */
+
         if (zd > 16 || canEditSpawn)
             player->gameMode->startDestroyBlock(x, y, z, packet->face);
         else
@@ -504,6 +520,21 @@ void PlayerConnection::handleUseItem(std::shared_ptr<UseItemPacket> packet) {
     bool canEditSpawn =
         level->canEditSpawn;  // = level->dimension->id != 0 ||
                               // server->players->isOp(player->name);
+
+    /* CactusModLoader [IMPL-START] */
+    if (packet->getFace() != 255 && item != NULL && item->id > 0 && item->id < 256) {
+        PlayerBlockPlaceEvent event(player.get(), x, y, z, level->getTile(x, y, z));
+        EventBus::Get().fire(event);
+
+        if (event.isCancelled()) {
+            player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
+            player->connection->send(std::make_shared<TileUpdatePacket>(x + Facing::STEP_X[face], y + Facing::STEP_Y[face], z + Facing::STEP_Z[face], level));
+            player->refreshContainer(player->containerMenu);
+            return;
+        }
+    }
+    /* CactusModLoader [IMPL-END] */
+
     if (packet->getFace() == 255) {
         if (item == NULL) return;
         player->gameMode->useItem(player, level, item);

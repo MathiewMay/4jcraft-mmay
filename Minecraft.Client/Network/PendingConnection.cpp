@@ -17,8 +17,8 @@
 #include "../GameState/Settings.h"
 
 /* Cactus ModLoader Includes */
-#include "../Cactus.ModLoader/Server/Events/Player/PlayerConnectionEvent.h"
-#include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "Server/Events/Player/PlayerConnectionEvent.h"
+#include "Common/EventSystem/EventBus.h"
 
 // #ifdef __PS3__
 // #include "PS3/Network/NetworkPlayerSony.h"
