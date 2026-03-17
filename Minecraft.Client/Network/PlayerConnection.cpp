@@ -36,6 +36,8 @@
 #include "../Cactus.ModLoader/Server/Events/Player/PlayerBlockBreakEvent.h"
 #include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
 #include "Server/Events/Player/PlayerConnectionEvent.h"
+#include "Server/Events/Player/PlayerFlightStartedEvent.h"
+#include "Server/Events/Player/PlayerFlightEndedEvent.h"
 
 Random PlayerConnection::random;
 
@@ -271,12 +273,26 @@ void PlayerConnection::handleMovePlayer(
             xRotT = packet->xRot;
         }
 
+        bool wasFlying = player->abilities.flying;
+
         // 4J Stu Added to stop server player y pos being different than client
         // when flying
         if (player->abilities.mayfly || player->isAllowedToFly()) {
             player->abilities.flying = packet->isFlying;
         } else
             player->abilities.flying = false;
+
+        // Since there is no easy built in way to detect "flying started / stopped"; we must add this in manually.
+        // TODO: Currently, desyncs will quickly toggle the flying state, resulting in false positives: could fix with a tick-based debounce?
+        if (!wasFlying && player->abilities.flying) {
+            PlayerFlightStartedEvent event(player.get());
+           EventBus::Get().fire(event); 
+        }
+
+        if (wasFlying && !player->abilities.flying) {
+            PlayerFlightEndedEvent event(player.get());
+           EventBus::Get().fire(event); 
+        }
 
         player->doTick(false);
         player->ySlideOffset = 0;
