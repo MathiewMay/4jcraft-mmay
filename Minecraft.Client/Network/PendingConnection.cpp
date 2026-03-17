@@ -15,6 +15,11 @@
 #include "../../Minecraft.World/Headers/net.minecraft.world.item.h"
 #include "../../Minecraft.World/Util/SharedConstants.h"
 #include "../GameState/Settings.h"
+
+/* Cactus ModLoader Includes */
+#include "../Cactus.ModLoader/Server/Events/Player/PlayerConnectionEvent.h"
+#include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+
 // #ifdef __PS3__
 // #include "PS3/Network/NetworkPlayerSony.h"
 // #endif
@@ -208,6 +213,12 @@ void PendingConnection::handleAcceptedLogin(
         server->getPlayers()->getPlayerForLogin(this, name, playerXuid,
                                                 packet->m_onlineXuid);
     if (playerEntity != NULL) {
+
+        /* CactusModLoader [IMPL-START] */
+        PlayerConnectionEvent event(playerEntity.get());
+        EventBus::Get().fire(event);
+        /* CactusModLoader [IMPL-END] */
+
         server->getPlayers()->placeNewPlayer(connection, playerEntity, packet);
         connection = NULL;  // We've moved responsibility for this over to the
                             // new PlayerConnection, NULL so we don't delete our

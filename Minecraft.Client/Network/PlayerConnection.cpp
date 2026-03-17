@@ -35,7 +35,6 @@
 /* Cactus ModLoader Includes */
 #include "../Cactus.ModLoader/Server/Events/Player/PlayerBlockBreakEvent.h"
 #include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
-#include "Server/Events/Player/PlayerConnectionEvent.h"
 
 Random PlayerConnection::random;
 
@@ -62,11 +61,6 @@ PlayerConnection::PlayerConnection(MinecraftServer* server,
     //	player->connection = this;		// 4J - moved out as we can't
     //assign in a ctor
     InitializeCriticalSection(&done_cs);
-
-    /* CactusModLoader [IMPL-START] */
-    PlayerConnectionEvent event(player.get());
-    EventBus::Get().fire(event);
-    /* CactusModLoader [IMPL-END] */
 
     m_bCloseOnTick = false;
     m_bWasKicked = false;
