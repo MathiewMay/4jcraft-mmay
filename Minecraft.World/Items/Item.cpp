@@ -1307,12 +1307,12 @@ bool Item::TestUse(Level* level, std::shared_ptr<Player> player) {
 std::shared_ptr<ItemInstance> Item::use(
     std::shared_ptr<ItemInstance> itemInstance, Level* level,
     std::shared_ptr<Player> player) {
-    /* CactusModLoader [IMPL-START] */
+    /* CactusModLoader [IMPL-START] <----- CAUSES A SIGFAULT WHEN ITEM USED
     ServerPlayer* serverPlayer = dynamic_cast<ServerPlayer*>(player.get());
     ServerLevel* serverLevel = dynamic_cast<ServerLevel*>(level);
     ItemInteractEvent event(*itemInstance, serverLevel, *serverPlayer);
     EventBus::Get().fire(event);
-     /* CactusModLoader [IMPL-END] */
+    /* CactusModLoader [IMPL-END] */
     return itemInstance;
 }
 

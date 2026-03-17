@@ -2,7 +2,7 @@ project('4jcraft-chucklegrounds', ['cpp', 'c'],
   version : '0.1.0',
   meson_version: '>= 1.1',
   default_options : [
-    'cpp_std=c++26',
+    'cpp_std=c++23',
     'warning_level=0',
     'buildtype=debug', # for now
     'unity=on', # merge source files per target
@@ -14,8 +14,8 @@ project('4jcraft-chucklegrounds', ['cpp', 'c'],
 fs = import('fs')
 
 if fs.is_dir('/usr/include/lua5.4')
-    message('Falling back to manual lua project argument')
-    add_project_arguments('-I/usr/include/lua5.4', language: ['c', 'cpp'])
+  message('Falling back to manual lua project argument')
+  add_project_arguments('-I/usr/include/lua5.4', language: ['c', 'cpp'])
 endif
 
 pymod = import('python')
@@ -36,8 +36,8 @@ thread_dep = dependency('threads')
 
 lua_names = ['lua-5.4','lua5.4','lua54','lua'] # throw dem bitches in a list
 lua_dep = dependency(
-  lua_names, 
-  required: true, 
+  lua_names,
+  required: true,
   not_found_message: 'Could not find lua, make sure it is installed, (lua 5.4)'
 )
 
