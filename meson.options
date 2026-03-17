@@ -7,3 +7,10 @@ option('enable_shiggy',
   type : 'boolean', 
   value : true, 
   description : 'Toggles shimmed PS4 Iggy binaries and UI for x86_64 Linux.')
+
+option('copy_example',
+  type : 'boolean',
+  value : true,
+  description : 'Automatically copies the example mod to the proper build directory for you.'
+
+)

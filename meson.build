@@ -11,8 +11,20 @@ project('4jcraft-chucklegrounds', ['cpp', 'c'],
   ],
 )
 
+fs = import('fs')
+include_dir = '/usr/include'
+
+if fs.is_dir(include_dir+'/lua5.4') and not fs.is_file(include_dir+'/lua.h')
+    message('Falling back to manual lua project argument')
+    add_project_arguments('-I/usr/include/lua5.4', language: ['c', 'cpp'])
+endif
+
 pymod = import('python')
 python = pymod.find_installation('python3', required: true)
+
+if get_option('copy-ex-mod')
+  run_command(python,'copy.py')
+endif
 
 cc = meson.get_compiler('cpp')
 
@@ -23,20 +35,12 @@ sdl2_dep   = dependency('sdl2') # Yes.. i know sdl3 is out, but there's not poin
                                 # someone is gonna ask me "Hey juicey can you make it SDL3?" and i'd be like fuck you and still do it.
 thread_dep = dependency('threads')
 
-lua_dep = dependency('lua-5.4', required: false)
-if not lua_dep.found()
-  lua_dep = dependency('lua5.4', required: false)
-endif
-if not lua_dep.found()
-  lua_dep = dependency('lua54', required: false)
-endif
-if not lua_dep.found()
-  lua_dep = dependency('lua', required: true)
-endif
-
-if not lua_dep.found()
-  error('Could not find lua, make sure it is installed, (lua 5.4)')
-endif
+lua_names = ['lua-5.4','lua5.4','lua54','lua'] # throw dem bitches in a list
+lua_dep = dependency(
+  lua_names, 
+  required: true, 
+  not_found_message: 'Could not find lua, make sure it is installed, (lua 5.4)'
+)
 
 # compile flags (chagne ts juicey)
 global_cpp_args = [
