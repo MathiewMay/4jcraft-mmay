@@ -21,7 +21,7 @@ endif
 pymod = import('python')
 python = pymod.find_installation('python3', required: true)
 
-if get_option('copy-ex-mod')
+if get_option('copy_example')
   run_command(python,'copy.py')
 endif
 
