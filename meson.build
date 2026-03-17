@@ -12,9 +12,8 @@ project('4jcraft-chucklegrounds', ['cpp', 'c'],
 )
 
 fs = import('fs')
-include_dir = '/usr/include'
 
-if fs.is_dir(include_dir+'/lua5.4') and not fs.is_file(include_dir+'/lua.h')
+if fs.is_dir('/usr/include/lua5.4')
     message('Falling back to manual lua project argument')
     add_project_arguments('-I/usr/include/lua5.4', language: ['c', 'cpp'])
 endif
