@@ -730,6 +730,9 @@ Loader loader;
 
 int main(int argc, const char *argv[] ){
     loader.collectMods();
+    loader.refreshCommonScripts();
+    loader.executeCommonScripts();
+
     loader.refreshClientScripts();
     loader.executeClientScripts();
 
