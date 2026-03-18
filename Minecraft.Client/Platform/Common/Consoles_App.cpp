@@ -25,6 +25,7 @@
 #include "../Minecraft.Client/GameState/StatsCounter.h"
 #include "../Minecraft.Client/GameState/GameMode.h"
 #include "../Minecraft.Client/Platform/Xbox/Social/SocialManager.h"
+#include "Registry/ItemRegistry.h"
 #include "Tutorial/TutorialMode.h"
 #if defined _XBOX || defined _WINDOWS64
 #include "../Minecraft.Client/Platform/Xbox/XML/ATGXmlParser.h"
@@ -4119,7 +4120,7 @@ void CMinecraftApp::loadStringTable()
 		byteArray locFile = m_mediaArchive->getFile(localisationFile);
 		m_stringTable = new StringTable(locFile.data, locFile.length);
 
-	        Minecraft::modloader->changeLang(*m_stringTable);
+		ItemRegistry::changeLang(*m_stringTable);
 
 		delete[] locFile.data;
 	}
