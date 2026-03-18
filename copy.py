@@ -2,7 +2,7 @@ import shutil
 import os
 import sys
 
-build_dir = "build" if os.path.exists("build") else "builddir"
+build_dir = "build" if os.path.exists("build") else "buildDir"
 
 src = "./Cactus.ModLoader/ExampleMod/"
 dest = build_dir + "/Minecraft.Client/mods/ExampleMod"

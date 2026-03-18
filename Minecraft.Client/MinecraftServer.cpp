@@ -133,6 +133,7 @@ bool MinecraftServer::initServer(__int64 seed, NetworkGameInitData* initData,
 
     /* Cactus ModLoader */
     EventBus::Get().clearListeners();
+    Minecraft::modloader->registerServerFunctions(this);
     Minecraft::modloader->refreshServerScripts();
     Minecraft::modloader->executeServerScripts();
 

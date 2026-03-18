@@ -33,8 +33,8 @@
 #include "../GameState/Options.h"
 
 /* Cactus ModLoader Includes */
-#include "../Cactus.ModLoader/Server/Events/Player/PlayerBlockBreakEvent.h"
-#include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "Server/Events/Player/PlayerBlockBreakEvent.h"
+#include "Common/EventSystem/EventBus.h"
 #include "Server/Events/Player/PlayerConnectionEvent.h"
 #include "Server/Events/Player/PlayerFlightStartedEvent.h"
 #include "Server/Events/Player/PlayerFlightEndedEvent.h"
@@ -64,11 +64,6 @@ PlayerConnection::PlayerConnection(MinecraftServer* server,
     //	player->connection = this;		// 4J - moved out as we can't
     //assign in a ctor
     InitializeCriticalSection(&done_cs);
-
-    /* CactusModLoader [IMPL-START] */
-    PlayerConnectionEvent event(player.get());
-    EventBus::Get().fire(event);
-    /* CactusModLoader [IMPL-END] */
 
     m_bCloseOnTick = false;
     m_bWasKicked = false;
@@ -469,6 +464,21 @@ void PlayerConnection::handlePlayerAction(
     delete spawnPos;
     if (xd > zd) zd = xd;
     if (packet->action == PlayerActionPacket::START_DESTROY_BLOCK) {
+        /* CactusModLoader [IMPL-START] */
+        int tileId = level->getTile(x, y, z);
+        bool isInstantBreak = player->gameMode->isCreative() || (tileId > 0 && Tile::tiles[tileId]->getDestroySpeed(level, x, y, z) == 0.0f);
+
+        if (isInstantBreak){
+            PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
+            EventBus::Get().fire(event);
+
+            if (event.isCancelled()) {
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
+                return;
+            }
+        }
+        /* CactusModLoader [IMPL-END] */
+
         if (zd > 16 || canEditSpawn)
             player->gameMode->startDestroyBlock(x, y, z, packet->face);
         else
@@ -529,6 +539,29 @@ void PlayerConnection::handleUseItem(std::shared_ptr<UseItemPacket> packet) {
     bool canEditSpawn =
         level->canEditSpawn;  // = level->dimension->id != 0 ||
                               // server->players->isOp(player->name);
+
+    /* CactusModLoader [IMPL-START] */
+    if (item != NULL && item->id > 0) {
+        Item* itemBase = Item::items[item->id];
+        if (isPlaceableItem(itemBase)) {
+            PlayerBlockPlaceEvent event(player.get(), x, y, z, level->getTile(x, y, z));
+            EventBus::Get().fire(event);
+
+            if (event.isCancelled()) {
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y + 1, z, level)); // top
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y - 1, z, level)); // bottom
+                player->connection->send(std::make_shared<TileUpdatePacket>(x + 1, y, z, level)); // right
+                player->connection->send(std::make_shared<TileUpdatePacket>(x - 1, y, z, level)); // left
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z + 1, level)); // front
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z - 1, level)); // back
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));     // self
+                player->refreshContainer(player->containerMenu);
+                return;
+            }
+        }
+    }
+    /* CactusModLoader [IMPL-END] */
+
     if (packet->getFace() == 255) {
         if (item == NULL) return;
         player->gameMode->useItem(player, level, item);

@@ -31,6 +31,10 @@
 #include "../Platform/Common/Network/Sony/NetworkPlayerSony.h"
 #endif
 
+/* Cactus ModLoader Includes */
+#include "Server/Events/Player/PlayerJoinEvent.h"
+#include "Common/EventSystem/EventBus.h"
+
 // 4J - this class is fairly substantially altered as there didn't seem any
 // point in porting code for banning, whitelisting, ops etc.
 
@@ -270,6 +274,7 @@ void PlayerList::placeNewPlayer(Connection* connection,
         true, true,
         false);  // 4J - added - force sending of the nearest chunk before the
                  // player is teleported, so we have somewhere to arrive on...
+
     playerConnection->teleport(player->x, player->y, player->z, player->yRot,
                                player->xRot);
 
@@ -286,6 +291,11 @@ void PlayerList::placeNewPlayer(Connection* connection,
     }
 
     player->initMenu();
+
+    /* CactusModLoader [IMPL-START] */
+    PlayerJoinEvent event(player.get());
+    EventBus::Get().fire(event);
+    /* CactusModLoader [IMPL-END] */
 
     // If we are joining at the same time as someone in the end on this system
     // is travelling through the win portal, then we should set our wonGame flag
