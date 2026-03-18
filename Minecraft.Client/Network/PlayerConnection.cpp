@@ -273,6 +273,7 @@ void PlayerConnection::handleMovePlayer(
             xRotT = packet->xRot;
         }
 
+		/* CactusModLoader [EXTRA BOOLEAN] */
         bool wasFlying = player->abilities.flying;
 
         // 4J Stu Added to stop server player y pos being different than client
@@ -282,6 +283,7 @@ void PlayerConnection::handleMovePlayer(
         } else
             player->abilities.flying = false;
 
+		/* CactusModLoader [IMPL-START] */
         // Since there is no easy built in way to detect "flying started / stopped"; we must add this in manually.
         // TODO: Currently, desyncs will quickly toggle the flying state, resulting in false positives: could fix with a tick-based debounce?
         if (!wasFlying && player->abilities.flying) {
@@ -293,6 +295,7 @@ void PlayerConnection::handleMovePlayer(
             PlayerFlightEndedEvent event(player.get());
            EventBus::Get().fire(event); 
         }
+		/* CactusModLoader [IMPL-END] */
 
         player->doTick(false);
         player->ySlideOffset = 0;
