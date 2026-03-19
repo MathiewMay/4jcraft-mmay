@@ -16,12 +16,15 @@
 #include "HangingEntityItem.h"
 
 /* Cactus ModLoader Includes */
-#include "../../Cactus.ModLoader/Server/Events/Item/ItemInteractEvent.h"
-#include "../../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "../Cactus.ModLoader/Server/Events/Player/PlayerJoinEvent.h"
+#include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "../Cactus.ModLoader/Server/Events/Item/ItemInteractEvent.h"
 #include "../Cactus.ModLoader/Client/Rendering/ModTextureAtlas.h"
 #include "../Minecraft.Client/Textures/Stitching/StitchedTexture.h"
 #include "../../Minecraft.Client/Level/ServerLevel.h"
+#include "../Minecraft.Client/Player/ServerPlayer.h"
 
+class ServerPlayer;
 typedef Item::Tier _Tier;
 
 std::wstring Item::ICON_DESCRIPTION_PREFIX = L"item.";
@@ -1312,10 +1315,10 @@ bool Item::TestUse(Level* level, std::shared_ptr<Player> player) {
 std::shared_ptr<ItemInstance> Item::use(
     std::shared_ptr<ItemInstance> itemInstance, Level* level,
     std::shared_ptr<Player> player) {
-    /* CactusModLoader [IMPL-START] <----- CAUSES A SIGFAULT WHEN ITEM USED
+    /* CactusModLoader [IMPL-START] */
     ServerPlayer* serverPlayer = dynamic_cast<ServerPlayer*>(player.get());
     ServerLevel* serverLevel = dynamic_cast<ServerLevel*>(level);
-    ItemInteractEvent event(*itemInstance, serverLevel, *serverPlayer);
+    ItemInteractEvent event(itemInstance.get(), serverLevel, serverPlayer);
     EventBus::Get().fire(event);
     /* CactusModLoader [IMPL-END] */
     return itemInstance;
