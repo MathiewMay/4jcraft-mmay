@@ -1,8 +1,5 @@
 #pragma once
 
-// Cactus ModLoader
-class Texture;
-
 class Icon {
 public:
     static const int TYPE_TERRAIN = 0;
@@ -36,7 +33,4 @@ public:
     virtual int getSourceHeight() const = 0;
     virtual int getFlags() const = 0;      // 4J added
     virtual void setFlags(int flags) = 0;  // 4J added
-
-    /* Cactus ModLoader */
-    virtual Texture* getSource() = 0;
 };

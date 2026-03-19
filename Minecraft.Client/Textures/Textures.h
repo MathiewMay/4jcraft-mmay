@@ -198,7 +198,6 @@ typedef enum _TEXTURE_NAME {
             TN_AH_0008,
             TN_AH_0009,*/
 
-    TN_MOD_ATLAS, // Cactus ModLoader
     TN_GUI_ITEMS,
     TN_TERRAIN,
 

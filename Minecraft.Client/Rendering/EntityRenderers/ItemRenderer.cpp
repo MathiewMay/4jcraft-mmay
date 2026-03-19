@@ -10,7 +10,7 @@
 #include "../../../Minecraft.World/Util/StringHelpers.h"
 #include "../../../Minecraft.World/Headers/net.minecraft.world.h"
 #include "../../GameState/Options.h"
-#include "Textures/Texture.h" //Cactus ModLoader
+#include "Client/Rendering/ModTextureAtlas.h"
 
 ItemRenderer::ItemRenderer() : EntityRenderer() {
     random = new Random();
@@ -134,7 +134,7 @@ void ItemRenderer::render(std::shared_ptr<Entity> _itemEntity, double x,
         if (item->id == Item::compass_Id) item->setAuxValue(0);
         /* Cactus ModLoader  HOOK */
         if (item->getIconType() == Icon::TYPE_MOD_ITEM) {
-            glBindTexture(GL_TEXTURE_2D, icon->getSource()->getGlId());
+            glBindTexture(GL_TEXTURE_2D, ModTextureAtlas::getInstance()->getAtlasGlId());
         }else if (item->getIconType() == Icon::TYPE_TERRAIN) {
             bindTexture(TN_TERRAIN);  // 4J was L"/terrain.png"
         } else {
@@ -224,7 +224,7 @@ void ItemRenderer::renderItemBillboard(std::shared_ptr<ItemEntity> entity,
             glTranslatef(0, 0, width + margin);
             /* Cactus ModLoader  HOOK */
             if (item->getIconType() == Icon::TYPE_MOD_ITEM) {
-                glBindTexture(GL_TEXTURE_2D, icon->getSource()->getGlId());
+                glBindTexture(GL_TEXTURE_2D, ModTextureAtlas::getInstance()->getAtlasGlId());
             }else if (item->getIconType() == Icon::TYPE_TERRAIN &&
                 Tile::tiles[item->id] != NULL) {
                 bindTexture(TN_TERRAIN);  // Was L"/terrain.png");
@@ -409,7 +409,7 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures,
         MemSect(31);
         /* Cactus ModLoader  HOOK */
         if (item->getIconType() == Icon::TYPE_MOD_ITEM) {
-            glBindTexture(GL_TEXTURE_2D, itemIcon->getSource()->getGlId());
+            glBindTexture(GL_TEXTURE_2D, ModTextureAtlas::getInstance()->getAtlasGlId());
         }else if (item->getIconType() == Icon::TYPE_TERRAIN) {
             textures->bindTexture(TN_TERRAIN);  // L"/terrain.png"));
         } else {

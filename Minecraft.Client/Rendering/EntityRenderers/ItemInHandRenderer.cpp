@@ -18,7 +18,7 @@
 #include "../../../Minecraft.World/Headers/net.minecraft.world.h"
 
 /* Cactus ModLoader Includes */
-#include "Textures/Texture.h"
+#include "Client/Rendering/ModTextureAtlas.h"
 #include "Textures/Stitching/StitchedTexture.h"
 class StitchedTexture;
 
@@ -203,7 +203,7 @@ void ItemInHandRenderer::renderItem(std::shared_ptr<Mob> mob,
 
         /* Cactus ModLoader HOOK */
         if (item->getIconType() == Icon::TYPE_MOD_ITEM) {
-            glBindTexture(GL_TEXTURE_2D, icon->getSource()->getGlId());
+            glBindTexture(GL_TEXTURE_2D, ModTextureAtlas::getInstance()->getAtlasGlId());
         }else if (item->getIconType() == Icon::TYPE_TERRAIN) {
             mc->textures->bindTexture(TN_TERRAIN);  // 4J was L"/terrain.png"
         } else {

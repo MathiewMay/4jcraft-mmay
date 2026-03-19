@@ -336,15 +336,6 @@ int Textures::loadTexture(int idx) {
             items->getStitchedTexture()->bind(0);
             return items->getStitchedTexture()->getGlId();
         }
-        /* Cactus ModLoader  HOOK */
-        if (idx == TN_MOD_ATLAS) {
-            int glId = ModTextureAtlas::getInstance()->getAtlasGlId();
-            if (glId >= 0) {
-                glBindTexture(GL_TEXTURE_2D, glId);
-                return glId;
-            }
-            return 0;
-        }
         return preLoadedIdx[idx];
     }
 }

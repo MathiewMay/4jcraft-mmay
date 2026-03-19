@@ -26,7 +26,4 @@ public:
     int getSourceHeight() const;
     int getFlags() const;      // 4J added
     void setFlags(int flags);  // 4J added
-
-    /* Cactus ModLoader */
-    Texture* getSource();
 };
