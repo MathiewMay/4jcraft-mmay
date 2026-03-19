@@ -544,7 +544,7 @@ void PlayerConnection::handleUseItem(std::shared_ptr<UseItemPacket> packet) {
     /* CactusModLoader [IMPL-START] */
     if (item != NULL && item->id > 0) {
         Item* itemBase = Item::items[item->id];
-        if (isPlaceableItem(itemBase)) {
+        if (CactusUtils::isPlaceableItem(itemBase)) {
             PlayerBlockPlaceEvent event(player.get(), x, y, z, level->getTile(x, y, z));
             EventBus::Get().fire(event);
 
