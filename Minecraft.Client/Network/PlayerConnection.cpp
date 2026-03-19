@@ -34,8 +34,9 @@
 
 /* Cactus ModLoader Includes */
 #include "Server/Events/Player/PlayerBlockBreakEvent.h"
+#include "Server/Events/Player/PlayerBlockPlaceEvent.h"
 #include "Common/EventSystem/EventBus.h"
-#include "Server/Events/Player/PlayerConnectionEvent.h"
+#include "Common/CactusUtils.h"
 #include "Server/Events/Player/PlayerFlightStartedEvent.h"
 #include "Server/Events/Player/PlayerFlightEndedEvent.h"
 

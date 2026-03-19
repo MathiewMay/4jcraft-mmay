@@ -26,6 +26,8 @@ public:
     static const int ITEM_NUM_COUNT = 32000;
     static void staticCtor();
     static void staticInit();
+    // Cactus ModLoader
+    int m_iconType = -1;
 
     // 4J-PB - added for new crafting menu
     enum {

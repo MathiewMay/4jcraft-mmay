@@ -16,6 +16,8 @@
 #include "../../Minecraft.World/Headers/net.minecraft.world.h"
 #include "../../Minecraft.World/Headers/net.minecraft.world.level.h"
 #include "../../Minecraft.World/Util/StringHelpers.h"
+/* Cactus ModLoader  Includes */
+#include "Client/Rendering/ModTextureAtlas.h"
 
 // Linux/PC port: disable mipmapping globally so textures are always sampled
 // from the full-resolution level 0 with GL_NEAREST, giving pixel-crisp
@@ -333,6 +335,15 @@ int Textures::loadTexture(int idx) {
         if (idx == TN_GUI_ITEMS) {
             items->getStitchedTexture()->bind(0);
             return items->getStitchedTexture()->getGlId();
+        }
+        /* Cactus ModLoader  HOOK */
+        if (idx == TN_MOD_ATLAS) {
+            int glId = ModTextureAtlas::getInstance()->getAtlasGlId();
+            if (glId >= 0) {
+                glBindTexture(GL_TEXTURE_2D, glId);
+                return glId;
+            }
+            return 0;
         }
         return preLoadedIdx[idx];
     }
@@ -1134,6 +1145,8 @@ void Textures::reloadAll() {
 }
 
 void Textures::stitch() {
+    /* Cactus ModLoader  HOOK */
+    ModTextureAtlas::getInstance()->build();
     terrain->stitch();
     items->stitch();
 }

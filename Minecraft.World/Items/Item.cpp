@@ -15,10 +15,12 @@
 #include "Item.h"
 #include "HangingEntityItem.h"
 
-#include "../../Minecraft.Client/Level/ServerLevel.h"
 /* Cactus ModLoader Includes */
 #include "../../Cactus.ModLoader/Server/Events/Item/ItemInteractEvent.h"
 #include "../../../Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "../Cactus.ModLoader/Client/Rendering/ModTextureAtlas.h"
+#include "../Minecraft.Client/Textures/Stitching/StitchedTexture.h"
+#include "../../Minecraft.Client/Level/ServerLevel.h"
 
 typedef Item::Tier _Tier;
 
@@ -1226,6 +1228,8 @@ int _Tier::getTierItemId() const {
 
 Item::Item(int id) : id(256 + id) {
     maxStackSize = Item::MAX_STACK_SIZE;
+    /* Cactus ModLoader */
+    m_iconType = -1;
     maxDamage = 0;
     icon = NULL;
     m_handEquipped = false;
@@ -1272,7 +1276,11 @@ Item* Item::setMaxStackSize(int max) {
     return this;
 }
 
-int Item::getIconType() { return Icon::TYPE_ITEM; }
+/* Cactus ModLoader */
+int Item::getIconType() {
+    if (m_iconType == -1) return Icon::TYPE_ITEM;
+    return m_iconType;
+}
 
 Icon* Item::getIcon(int auxValue) { return icon; }
 
@@ -1545,6 +1553,15 @@ bool Item::isValidRepairItem(std::shared_ptr<ItemInstance> source,
 }
 
 void Item::registerIcons(IconRegister* iconRegister) {
+    /* Cactus ModLoader [HOOK-START] */
+    StitchedTexture* modIcon = ModTextureAtlas::getInstance()->getIcon(m_textureName);
+    if (modIcon != nullptr) {
+        icon = modIcon;
+        m_iconType = Icon::TYPE_MOD_ITEM;
+        return;
+    }
+    m_iconType = Icon::TYPE_ITEM;
+    /* Cactus ModLoader [HOOK-END] */
     icon = iconRegister->registerIcon(m_textureName);
 }
 

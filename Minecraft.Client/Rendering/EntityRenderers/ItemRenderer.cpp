@@ -10,6 +10,7 @@
 #include "../../../Minecraft.World/Util/StringHelpers.h"
 #include "../../../Minecraft.World/Headers/net.minecraft.world.h"
 #include "../../GameState/Options.h"
+#include "Textures/Texture.h" //Cactus ModLoader
 
 ItemRenderer::ItemRenderer() : EntityRenderer() {
     random = new Random();
@@ -131,7 +132,10 @@ void ItemRenderer::render(std::shared_ptr<Entity> _itemEntity, double x,
         if (item->id == Item::compass_Id) item->setAuxValue(255);
         Icon* icon = item->getIcon();
         if (item->id == Item::compass_Id) item->setAuxValue(0);
-        if (item->getIconType() == Icon::TYPE_TERRAIN) {
+        /* Cactus ModLoader  HOOK */
+        if (item->getIconType() == Icon::TYPE_MOD_ITEM) {
+            glBindTexture(GL_TEXTURE_2D, icon->getSource()->getGlId());
+        }else if (item->getIconType() == Icon::TYPE_TERRAIN) {
             bindTexture(TN_TERRAIN);  // 4J was L"/terrain.png"
         } else {
             bindTexture(TN_GUI_ITEMS);  // 4J was L"/gui/items.png"
@@ -218,7 +222,10 @@ void ItemRenderer::renderItemBillboard(std::shared_ptr<ItemEntity> entity,
 
         for (int i = 0; i < count; i++) {
             glTranslatef(0, 0, width + margin);
-            if (item->getIconType() == Icon::TYPE_TERRAIN &&
+            /* Cactus ModLoader  HOOK */
+            if (item->getIconType() == Icon::TYPE_MOD_ITEM) {
+                glBindTexture(GL_TEXTURE_2D, icon->getSource()->getGlId());
+            }else if (item->getIconType() == Icon::TYPE_TERRAIN &&
                 Tile::tiles[item->id] != NULL) {
                 bindTexture(TN_TERRAIN);  // Was L"/terrain.png");
             } else {
@@ -228,9 +235,11 @@ void ItemRenderer::renderItemBillboard(std::shared_ptr<ItemEntity> entity,
             // 4J Stu - u coords were swapped in Java
             // ItemInHandRenderer::renderItem3D(t, u1, v0, u0, v1,
             // icon->getSourceWidth(), icon->getSourceHeight(), width, false);
-            ItemInHandRenderer::renderItem3D(
-                t, u0, v0, u1, v1, icon->getSourceWidth(),
-                icon->getSourceHeight(), width, false);
+
+            /* Cactus ModLoader  */
+            float uvScaleU = (item->getIconType() == Icon::TYPE_MOD_ITEM) ? ( u1 - u0 ) * 16.0f : 1.0f;
+            float uvScaleV = (item->getIconType() == Icon::TYPE_MOD_ITEM) ? ( v1 - v0 ) * 16.0f : 1.0f;
+            ItemInHandRenderer::renderItem3D(t, u0, v0, u1, v1, icon->getSourceWidth(),icon->getSourceHeight(), width, false, uvScaleU, uvScaleV);
 
             if (item != NULL && item->isFoil()) {
                 glDepthFunc(GL_EQUAL);
@@ -250,8 +259,7 @@ void ItemRenderer::renderItemBillboard(std::shared_ptr<ItemEntity> entity,
                 glTranslatef(sx, 0, 0);
                 glRotatef(-50, 0, 0, 1);
 
-                ItemInHandRenderer::renderItem3D(t, 0, 0, 1, 1, 255, 255, width,
-                                                 true);
+                ItemInHandRenderer::renderItem3D(t, 0.0f, 0.0f, 1.0f, 1.0f, 255, 255, width, true, 1.0f, 1.0f);
                 glPopMatrix();
                 glPushMatrix();
                 glScalef(ss, ss, ss);
@@ -259,8 +267,7 @@ void ItemRenderer::renderItemBillboard(std::shared_ptr<ItemEntity> entity,
                      (3000 + 1873.0f) * 8;
                 glTranslatef(-sx, 0, 0);
                 glRotatef(10, 0, 0, 1);
-                ItemInHandRenderer::renderItem3D(t, 0, 0, 1, 1, 255, 255, width,
-                                                 true);
+                ItemInHandRenderer::renderItem3D(t, 0.0f, 0.0f, 1.0f, 1.0f, 255, 255, width, true, 1.0f, 1.0f);
                 glPopMatrix();
                 glMatrixMode(GL_MODELVIEW);
                 glDisable(GL_BLEND);
@@ -395,8 +402,15 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures,
     } else {
         PIXBeginNamedEvent(0, "2D gui item render %d\n", itemIcon);
         glDisable(GL_LIGHTING);
+        if (itemIcon == NULL) {
+            itemIcon = textures->getMissingIcon(item->getIconType());
+        }
+
         MemSect(31);
-        if (item->getIconType() == Icon::TYPE_TERRAIN) {
+        /* Cactus ModLoader  HOOK */
+        if (item->getIconType() == Icon::TYPE_MOD_ITEM) {
+            glBindTexture(GL_TEXTURE_2D, itemIcon->getSource()->getGlId());
+        }else if (item->getIconType() == Icon::TYPE_TERRAIN) {
             textures->bindTexture(TN_TERRAIN);  // L"/terrain.png"));
         } else {
             textures->bindTexture(
@@ -411,10 +425,6 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures,
 #endif
         }
         MemSect(0);
-
-        if (itemIcon == NULL) {
-            itemIcon = textures->getMissingIcon(item->getIconType());
-        }
 
         int col = Item::items[itemId]->getColor(item, 0);
         float r = ((col >> 16) & 0xff) / 255.0f;

@@ -1,5 +1,8 @@
 #pragma once
 
+// Cactus ModLoader
+class Texture;
+
 class Icon {
 public:
     static const int TYPE_TERRAIN = 0;
@@ -7,6 +10,9 @@ public:
 
     static const int IS_GRASS_SIDE = 1;
     static const int IS_GRASS_TOP = 2;
+
+    /* Cactus ModLoader */
+    static const int TYPE_MOD_ITEM = 2;
 
 #ifdef __PSVITA__
     // AP - alpha cut out is expensive on vita so we mark which icons require it
@@ -30,4 +36,7 @@ public:
     virtual int getSourceHeight() const = 0;
     virtual int getFlags() const = 0;      // 4J added
     virtual void setFlags(int flags) = 0;  // 4J added
+
+    /* Cactus ModLoader */
+    virtual Texture* getSource() = 0;
 };

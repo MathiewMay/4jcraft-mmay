@@ -54,3 +54,6 @@ int FlippedIcon::getSourceHeight() const { return base->getSourceHeight(); }
 int FlippedIcon::getFlags() const { return base->getFlags(); }
 
 void FlippedIcon::setFlags(int flags) { base->setFlags(flags); }
+
+/* Cactus ModLoader */
+Texture* FlippedIcon::getSource() { return base->getSource(); }

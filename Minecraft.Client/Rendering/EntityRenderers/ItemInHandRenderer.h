@@ -27,9 +27,10 @@ public:
     void renderItem(std::shared_ptr<Mob> mob,
                     std::shared_ptr<ItemInstance> item, int layer,
                     bool setColor = true);  // 4J added setColor parameter
-    static void renderItem3D(Tesselator* t, float u0, float v0, float u1,
-                             float v1, int width, int height, float depth,
-                             bool isGlint);  // 4J added isGlint parameter
+    /* Cactus ModLoader */
+    static void renderItem3D(Tesselator* t, float u0, float v0, float u1, float v1,
+                         int width, int height, float depth, bool isGlint,
+                         float uvScaleU = 1.0f, float uvScaleV = 1.0f);  // Cactus ModLoader
 public:
     void render(float a);
     void renderScreenEffect(float a);

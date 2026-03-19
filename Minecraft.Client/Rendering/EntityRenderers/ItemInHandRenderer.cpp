@@ -17,6 +17,11 @@
 #include "../../../Minecraft.World/Headers/net.minecraft.world.level.h"
 #include "../../../Minecraft.World/Headers/net.minecraft.world.h"
 
+/* Cactus ModLoader Includes */
+#include "Textures/Texture.h"
+#include "Textures/Stitching/StitchedTexture.h"
+class StitchedTexture;
+
 int ItemInHandRenderer::list = -1;
 int ItemInHandRenderer::listGlint = -1;
 
@@ -196,7 +201,10 @@ void ItemInHandRenderer::renderItem(std::shared_ptr<Mob> mob,
             return;
         }
 
-        if (item->getIconType() == Icon::TYPE_TERRAIN) {
+        /* Cactus ModLoader HOOK */
+        if (item->getIconType() == Icon::TYPE_MOD_ITEM) {
+            glBindTexture(GL_TEXTURE_2D, icon->getSource()->getGlId());
+        }else if (item->getIconType() == Icon::TYPE_TERRAIN) {
             mc->textures->bindTexture(TN_TERRAIN);  // 4J was L"/terrain.png"
         } else {
             mc->textures->bindTexture(
@@ -240,8 +248,10 @@ void ItemInHandRenderer::renderItem(std::shared_ptr<Mob> mob,
         glTranslatef(-15 / 16.0f, -1 / 16.0f, 0);
         float dd = 1 / 16.0f;
 
-        renderItem3D(t, u0, v0, u1, v1, icon->getSourceWidth(),
-                     icon->getSourceHeight(), 1 / 16.0f, false);
+        /* Cactus ModLoader HOOK */
+        float uvScaleU = (item->getIconType() == Icon::TYPE_MOD_ITEM) ? ( u1 - u0 ) * 16.0f : 1.0f;
+        float uvScaleV = (item->getIconType() == Icon::TYPE_MOD_ITEM) ? ( v1 - v0 ) * 16.0f : 1.0f;
+        renderItem3D(t, u0, v0, u1, v1, icon->getSourceWidth(), icon->getSourceHeight(), 1 / 16.0f, false, uvScaleU, uvScaleV);
 
         if (item != NULL && item->isFoil() && layer == 0) {
             glDepthFunc(GL_EQUAL);
@@ -263,7 +273,7 @@ void ItemInHandRenderer::renderItem(std::shared_ptr<Mob> mob,
             glTranslatef(sx, 0, 0);
             glRotatef(-50, 0, 0, 1);
 
-            renderItem3D(t, 0, 0, 1, 1, 256, 256, 1 / 16.0f, true);
+            renderItem3D(t, 0.0f, 0.0f, 1.0f, 1.0f, 256, 256, 1 / 16.0f, true, 1.0f, 1.0f);
             glPopMatrix();
             glPushMatrix();
             glScalef(ss, ss, ss);
@@ -271,7 +281,7 @@ void ItemInHandRenderer::renderItem(std::shared_ptr<Mob> mob,
                  (3000 + 1873.0f) * 8;
             glTranslatef(-sx, 0, 0);
             glRotatef(10, 0, 0, 1);
-            renderItem3D(t, 0, 0, 1, 1, 256, 256, 1 / 16.0f, true);
+            renderItem3D(t, 0.0f, 0.0f, 1.0f, 1.0f, 256, 256, 1 / 16.0f, true, 1.0f, 1.0f);
             glPopMatrix();
             glMatrixMode(GL_MODELVIEW);
             glDisable(GL_BLEND);
@@ -285,7 +295,7 @@ void ItemInHandRenderer::renderItem(std::shared_ptr<Mob> mob,
     }
     glPopMatrix();
 }
-
+/*
 // 4J added useList parameter
 void ItemInHandRenderer::renderItem3D(Tesselator* t, float u0, float v0,
                                       float u1, float v1, int width, int height,
@@ -314,6 +324,26 @@ void ItemInHandRenderer::renderItem3D(Tesselator* t, float u0, float v0,
     }
     // 4J added since we are setting the colour to other values at the start of
     // the function now
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}*/
+
+/* Cactus ModLoader */
+void ItemInHandRenderer::renderItem3D(Tesselator* t, float u0, float v0,
+                                      float u1, float v1, int width, int height,
+                                      float depth, bool isGlint, float uvScaleU, float uvScaleV) {
+    if (isGlint) {
+        glCallList(listGlint);
+    } else {
+        glMatrixMode(GL_TEXTURE);
+        glLoadIdentity();
+        glTranslatef(u0, v0, 0);
+        if (uvScaleU != 1.0f || uvScaleV != 1.0f) {
+            glScalef(uvScaleU, uvScaleV, 1.0f);  // Cactus ModLoader
+        }
+        glCallList(list);
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+    }
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
