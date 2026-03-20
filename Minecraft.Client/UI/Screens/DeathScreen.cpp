@@ -3,6 +3,7 @@
 #include "DeathScreen.h"
 #include "../Button.h"
 #include "../../Player/MultiPlayerLocalPlayer.h"
+#include "PauseScreen.h"
 #include "TitleScreen.h"
 
 void DeathScreen::init() {
@@ -30,8 +31,11 @@ void DeathScreen::buttonClicked(Button* button) {
         //          minecraft.setScreen(new NewLevelScreen(this));
     }
     if (button->id == 2) {
-        minecraft->setLevel(NULL);
-        minecraft->setScreen(new TitleScreen());
+        // minecraft->setLevel(NULL);
+        // minecraft->setScreen(new TitleScreen());
+
+        // 4jcraft: use the static method from PauseScreen to exit
+        PauseScreen::exitWorld(minecraft, true);
     }
 }
 
@@ -49,11 +53,11 @@ void DeathScreen::render(int xm, int ym, float a) {
     Screen::render(xm, ym, a);
 
     // 4J - debug code - remove
-    static int count = 0;
-    if (count++ == 100) {
-        count = 0;
-        buttonClicked(buttons[0]);
-    }
+    // static int count = 0;
+    // if (count++ == 100) {
+    //     count = 0;
+    //     buttonClicked(buttons[0]);
+    // }
 }
 
 bool DeathScreen::isPauseScreen() { return false; }
