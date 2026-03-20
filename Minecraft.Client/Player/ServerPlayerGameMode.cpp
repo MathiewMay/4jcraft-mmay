@@ -12,6 +12,7 @@
 #include "../../Minecraft.World/Headers/net.minecraft.world.level.dimension.h"
 #include "../Level/MultiPlayerLevel.h"
 #include "../Rendering/LevelRenderer.h"
+#include "Server/Events/Player/PlayerBlockBreakEvent.h"
 
 ServerPlayerGameMode::ServerPlayerGameMode(Level* level) {
     // 4J - added initialisers
@@ -215,6 +216,16 @@ bool ServerPlayerGameMode::destroyBlock(int x, int y, int z) {
 
     int t = level->getTile(x, y, z);
     int data = level->getData(x, y, z);
+
+    /* CactusModLoader [IMPL-START] */
+    PlayerBlockBreakEvent event(player.get(), x, y, z, t);
+    EventBus::Get().fire(event);
+
+    if (event.isCancelled()) {
+        player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
+        return false;
+    }
+    /* CactusModLoader [IMPL-END] */
 
     level->levelEvent(player, LevelEvent::PARTICLES_DESTROY_BLOCK, x, y, z,
                       t + (level->getData(x, y, z) << Tile::TILE_NUM_SHIFT));

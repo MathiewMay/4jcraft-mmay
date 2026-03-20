@@ -465,46 +465,14 @@ void PlayerConnection::handlePlayerAction(
     delete spawnPos;
     if (xd > zd) zd = xd;
     if (packet->action == PlayerActionPacket::START_DESTROY_BLOCK) {
-        /* CactusModLoader [IMPL-START] */
-        int tileId = level->getTile(x, y, z);
-        bool isInstantBreak = player->gameMode->isCreative() || (tileId > 0 && Tile::tiles[tileId]->getDestroySpeed(level, x, y, z) == 0.0f);
-
-        if (isInstantBreak){
-            app.DebugPrintf("START_DESTROY_BLOCK x:%d y:%d z:%d\n", x, y, z);
-            PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
-            EventBus::Get().fire(event);
-
-            if (event.isCancelled()) {
-                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
-                return;
-            }
-        }
-        /* CactusModLoader [IMPL-END] */
-
-        if (zd > 16 || canEditSpawn)
+        if (zd > 16 || canEditSpawn) {
             player->gameMode->startDestroyBlock(x, y, z, packet->face);
-        else
+        }else {
             player->connection->send(std::shared_ptr<TileUpdatePacket>(
                 new TileUpdatePacket(x, y, z, level)));
+        }
 
     } else if (packet->action == PlayerActionPacket::STOP_DESTROY_BLOCK) {
-        /* CactusModLoader [IMPL-START] */
-        int tileId = level->getTile(x, y, z);
-        bool isInstantBreak = player->gameMode->isCreative() || (tileId > 0 && Tile::tiles[tileId]->getDestroySpeed(level, x, y, z) == 0.0f);
-
-        if (!isInstantBreak) {
-            app.DebugPrintf("START_DESTROY_BLOCK x:%d y:%d z:%d\n", x, y, z);
-
-            PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
-            EventBus::Get().fire(event);
-
-            if (event.isCancelled()) {
-                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
-                return;
-            }
-        }
-        /* CactusModLoader [IMPL-END] */
-
         player->gameMode->stopDestroyBlock(x, y, z);
         server->getPlayers()->prioritiseTileChanges(
             x, y, z,
