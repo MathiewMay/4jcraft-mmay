@@ -733,9 +733,6 @@ int main(int argc, const char *argv[] ){
     //loader.refreshCommonScripts();
     //loader.executeCommonScripts();
 
-    loader.refreshClientScripts();
-    loader.executeClientScripts();
-
     Minecraft::modloader = &loader;
 
 #if defined(__linux__) && defined(__GLIBC__)
@@ -893,6 +890,8 @@ return -1;
     Tile::CreateNewThreadStorage();
 
     Minecraft::main();
+    loader.refreshClientScripts();
+    loader.executeClientScripts();
 
     // Minecraft::main () used to call Minecraft::Start, but this takes ~2.5
     // seconds, so now running this in another thread so we can do some basic

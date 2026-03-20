@@ -470,6 +470,7 @@ void PlayerConnection::handlePlayerAction(
         bool isInstantBreak = player->gameMode->isCreative() || (tileId > 0 && Tile::tiles[tileId]->getDestroySpeed(level, x, y, z) == 0.0f);
 
         if (isInstantBreak){
+            app.DebugPrintf("START_DESTROY_BLOCK x:%d y:%d z:%d\n", x, y, z);
             PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
             EventBus::Get().fire(event);
 
@@ -489,12 +490,18 @@ void PlayerConnection::handlePlayerAction(
     } else if (packet->action == PlayerActionPacket::STOP_DESTROY_BLOCK) {
         /* CactusModLoader [IMPL-START] */
         int tileId = level->getTile(x, y, z);
-        PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
-        EventBus::Get().fire(event);
+        bool isInstantBreak = player->gameMode->isCreative() || (tileId > 0 && Tile::tiles[tileId]->getDestroySpeed(level, x, y, z) == 0.0f);
 
-        if (event.isCancelled()) {
-            player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
-            return;
+        if (!isInstantBreak) {
+            app.DebugPrintf("START_DESTROY_BLOCK x:%d y:%d z:%d\n", x, y, z);
+
+            PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
+            EventBus::Get().fire(event);
+
+            if (event.isCancelled()) {
+                player->connection->send(std::make_shared<TileUpdatePacket>(x, y, z, level));
+                return;
+            }
         }
         /* CactusModLoader [IMPL-END] */
 
