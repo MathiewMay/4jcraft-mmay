@@ -467,11 +467,9 @@ void PlayerConnection::handlePlayerAction(
     if (packet->action == PlayerActionPacket::START_DESTROY_BLOCK) {
         /* CactusModLoader [IMPL-START] */
         int tileId = level->getTile(x, y, z);
-        Tile* tile = tileId > 0 ? Tile::tiles[tileId] : nullptr;
-        bool isInstantBreak = player->gameMode->isCreative() || (tile != nullptr && tile->getDestroySpeed(level, x, y, z) == 0.0f);
-        bool wasInstantlyBroken = (tile != nullptr && tile->getDestroySpeed(level,x,y,z) <= player->getDestroySpeed(tile));
+        bool isInstantBreak = player->gameMode->isCreative() || (tileId > 0 && Tile::tiles[tileId]->getDestroySpeed(level, x, y, z) == 0.0f);
 
-        if (isInstantBreak || wasInstantlyBroken){
+        if (isInstantBreak){
             app.DebugPrintf("START_DESTROY_BLOCK x:%d y:%d z:%d\n", x, y, z);
             PlayerBlockBreakEvent event(player.get(), x, y, z, tileId);
             EventBus::Get().fire(event);
