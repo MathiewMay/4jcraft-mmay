@@ -890,8 +890,10 @@ return -1;
     Tile::CreateNewThreadStorage();
 
     Minecraft::main();
+
+    // Cactus Modloader
     loader.refreshClientScripts();
-    loader.executeClientScripts();
+    loader.executeClientScripts("main",true);
 
     // Minecraft::main () used to call Minecraft::Start, but this takes ~2.5
     // seconds, so now running this in another thread so we can do some basic
@@ -919,6 +921,7 @@ return -1;
 
     app.InitialiseTips();
     while (!RenderManager.ShouldClose()) {
+        loader.executeClientScripts("update"); // Cactus Modloader
         RenderManager.StartFrame();
 #ifdef _ENABLEIGGY
         if (pMinecraft->pollResize()) {
