@@ -4,6 +4,6 @@
 class DirtTile : public Tile {
     friend class Tile;
 
-protected:
+public: //was previously protected, for CML testing
     DirtTile(int id);
 };

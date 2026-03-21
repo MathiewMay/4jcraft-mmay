@@ -16,6 +16,8 @@
 #include "../Headers/net.minecraft.h"
 #include "Tile.h"
 
+#include "../Cactus.ModLoader/Registry/BlockRegistry.h"
+
 namespace {
 #if defined(_WIN32)
 inline void* TileTlsGetValue(Tile::TlsKey key) { return TlsGetValue(key); }
@@ -271,6 +273,8 @@ void Tile::staticCtor() {
 
     Tile::tiles = new Tile*[TILE_NUM_COUNT];
     memset(tiles, 0, sizeof(Tile*) * TILE_NUM_COUNT);
+
+    BlockRegistry::_registerBlocks();
 
     Tile::rail = (new RailTile(66, false))
                      ->setBaseItemTypeAndMaterial(Item::eBaseItemType_rail,
@@ -1574,6 +1578,21 @@ void Tile::staticCtor() {
     Item::items[Tile::anvil_Id] = (new AnvilTileItem(anvil))
                                       ->setDescriptionId(IDS_TILE_ANVIL)
                                       ->setUseDescriptionId(IDS_DESC_ANVIL);
+
+    /*
+    Tile::test = (new DirtTile(408))
+                     ->setDestroyTime(0.5f)
+                     ->setSoundType(Tile::SOUND_GRAVEL)
+                     ->setTextureName(L"redstoneLight")
+                     ->setDescriptionId(IDS_TILE_DIRT)
+                     ->setUseDescriptionId(IDS_DESC_DIRT);
+
+    Item::items[Tile::test_Id] = (new TileItem(test_Id-256))
+                     ->setTextureName(L"stick")
+                                      ->setDescriptionId(IDS_TILE_ANVIL)
+                                      ->setUseDescriptionId(IDS_DESC_ANVIL);
+
+    Tile::tiles[408] = test;*/
 
     for (int i = 0; i < 256; i++) {
         if (Tile::tiles[i] != NULL) {

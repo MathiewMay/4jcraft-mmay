@@ -45,6 +45,8 @@
 #include "../Stats/CommonStats.h"
 #endif
 
+
+
 void MinecraftWorld_RunStaticCtors() {
     // The ordering of these static ctors can be important. If they are within
     // statement blocks then DO NOT CHANGE the ordering - 4J Stu

@@ -517,7 +517,7 @@ private:
 protected:
     Icon* icon;
 
-protected:
+public: //CML R: why was this protected before????
     void _init(int id, Material* material, bool isSolidRender);
     Tile(int id, Material* material, bool isSolidRender = true);
     virtual ~Tile() {}
@@ -706,6 +706,7 @@ public:
     virtual std::wstring getTileItemIconName();
     // 4J Using per-item textures now
     Tile* setTextureName(const std::wstring& name);
+
     // AP - added this function so we can generate the faceFlags for a block in
     // a single fast function
     int getFaceFlags(LevelSource* level, int x, int y, int z);
