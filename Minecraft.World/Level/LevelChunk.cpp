@@ -2407,6 +2407,10 @@ void LevelChunk::setBlockData(byteArray data) {
         upperBlocks->setData(data, Level::COMPRESSED_CHUNK_SECTION_TILES);
 }
 
+void LevelChunk::getBlockDataWide(shortArray data) {
+
+}
+
 // Sets data in passed in array of size 32768, from the block data in this chunk
 void LevelChunk::getBlockData(byteArray data) {
     lowerBlocks->getData(data, 0);

@@ -16,8 +16,6 @@
 #include "../Headers/net.minecraft.h"
 #include "Tile.h"
 
-#include "../Cactus.ModLoader/Registry/BlockRegistry.h"
-
 namespace {
 #if defined(_WIN32)
 inline void* TileTlsGetValue(Tile::TlsKey key) { return TlsGetValue(key); }
@@ -273,8 +271,6 @@ void Tile::staticCtor() {
 
     Tile::tiles = new Tile*[TILE_NUM_COUNT];
     memset(tiles, 0, sizeof(Tile*) * TILE_NUM_COUNT);
-
-    BlockRegistry::_registerBlocks();
 
     Tile::rail = (new RailTile(66, false))
                      ->setBaseItemTypeAndMaterial(Item::eBaseItemType_rail,
@@ -1594,7 +1590,7 @@ void Tile::staticCtor() {
 
     Tile::tiles[408] = test;*/
 
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < TILE_NUM_COUNT; i++) {
         if (Tile::tiles[i] != NULL) {
             if (Item::items[i] == NULL) {
                 Item::items[i] = new TileItem(i - 256);
