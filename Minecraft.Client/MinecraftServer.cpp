@@ -135,7 +135,7 @@ bool MinecraftServer::initServer(__int64 seed, NetworkGameInitData* initData,
     EventBus::Get().clearListeners();
     Minecraft::modloader->registerServerFunctions(this);
     Minecraft::modloader->refreshServerScripts();
-    Minecraft::modloader->executeServerScripts();
+    Minecraft::modloader->executeServerScripts("main",true);
 
     app.DebugPrintf("\n*** SERVER SETTINGS ***\n");
     app.DebugPrintf(
@@ -1531,6 +1531,8 @@ void MinecraftServer::broadcastStopSavingPacket() {
 }
 
 void MinecraftServer::tick() {
+    Minecraft::modloader->executeServerScripts("tick"); // Cactus Modloader
+    
     std::vector<std::wstring> toRemove;
     for (AUTO_VAR(it, ironTimers.begin()); it != ironTimers.end(); it++) {
         int t = it->second;

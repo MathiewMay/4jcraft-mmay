@@ -144,6 +144,7 @@ public:
 
     // 4J - per player ?
     volatile bool pause;
+    volatile bool exitingWorldRightNow;
 
     Textures* textures;
     Font *font, *altFont;

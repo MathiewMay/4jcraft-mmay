@@ -733,9 +733,6 @@ int main(int argc, const char *argv[] ){
     //loader.refreshCommonScripts();
     //loader.executeCommonScripts();
 
-    loader.refreshClientScripts();
-    loader.executeClientScripts();
-
     Minecraft::modloader = &loader;
 
 #if defined(__linux__) && defined(__GLIBC__)
@@ -893,6 +890,8 @@ return -1;
     Tile::CreateNewThreadStorage();
 
     Minecraft::main();
+    loader.refreshClientScripts();
+    loader.executeClientScripts("main",true);
 
     // Minecraft::main () used to call Minecraft::Start, but this takes ~2.5
     // seconds, so now running this in another thread so we can do some basic
@@ -920,6 +919,7 @@ return -1;
 
     app.InitialiseTips();
     while (!RenderManager.ShouldClose()) {
+        loader.executeClientScripts("update"); // Cactus Modloader
         RenderManager.StartFrame();
 #ifdef _ENABLEIGGY
         if (pMinecraft->pollResize()) {
@@ -966,7 +966,12 @@ return -1;
             pMinecraft->run_middle();
 #endif
             app.SetAppPaused(
-                g_NetworkManager.IsLocalGame() &&
+                // TODO: proper fix for pausing
+                // 4jcraft: IsLocalGame() doesn't seem to work properly on Iggy
+                // UI, this should work even in multiplayer scenarios though
+                // since it checks for the player count anyway
+                //
+                // g_NetworkManager.IsLocalGame() &&
                 g_NetworkManager.GetPlayerCount() == 1 &&
                 ui.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad()));
         } else {

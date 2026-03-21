@@ -125,6 +125,7 @@ Minecraft::Minecraft(Component* mouseComponent, Canvas* parent,
     user = NULL;
     parent = NULL;
     pause = false;
+    exitingWorldRightNow = false;
     textures = NULL;
     font = NULL;
     screen = NULL;
@@ -549,8 +550,9 @@ void Minecraft::setScreen(Screen* screen) {
         screen = new TitleScreen();
     } else if (player != NULL && !ui.GetMenuDisplayed(player->GetXboxPad()) &&
                player->getHealth() <= 0) {
-        // screen = new DeathScreen();
-
+#ifdef ENABLE_JAVA_GUIS
+        screen = new DeathScreen();
+#else
         // 4J Stu - If we exit from the death screen then we are saved as being
         // dead. In the Java game when you load the game you are still dead, but
         // this is silly so only show the dead screen if we have died during
@@ -560,6 +562,7 @@ void Minecraft::setScreen(Screen* screen) {
         } else {
             ui.NavigateToScene(player->GetXboxPad(), eUIScene_DeathMenu, NULL);
         }
+#endif
     }
 
     if (dynamic_cast<TitleScreen*>(screen) != NULL) {
@@ -1254,6 +1257,15 @@ void Minecraft::run_middle() {
     static int iFirstTimeCountdown = 60;
     if (lastTime == 0) lastTime = System::nanoTime();
     static int frames = 0;
+
+#ifdef ENABLE_JAVA_GUIS
+    // 4jcraft: while the java ui is leaving world, don't run the rest of
+    // run_middle
+    if (exitingWorldRightNow) {
+        screen->render(0, 0, 1);
+        return;
+    }
+#endif
 
     EnterCriticalSection(&m_setLevelCS);
 
