@@ -6,6 +6,8 @@
 #include <assert.h>
 // #include <system_service.h>
 #include <codecvt>
+
+#include "Registry/ItemRegistry.h"
 #if defined(__linux__) && defined(__GLIBC__)
 #include <signal.h>
 #include <execinfo.h>
@@ -892,6 +894,7 @@ return -1;
     Minecraft::main();
     loader.refreshClientScripts();
     loader.executeClientScripts("main",true);
+    ItemRegistry::changeLang(*app.m_stringTable);
 
     // Minecraft::main () used to call Minecraft::Start, but this takes ~2.5
     // seconds, so now running this in another thread so we can do some basic
