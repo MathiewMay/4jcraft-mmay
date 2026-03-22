@@ -25,7 +25,7 @@
 #include "../Minecraft.Client/GameState/StatsCounter.h"
 #include "../Minecraft.Client/GameState/GameMode.h"
 #include "../Minecraft.Client/Platform/Xbox/Social/SocialManager.h"
-#include "Registry/ItemRegistry.h"
+#include "Registry/Item/ItemRegistry.h"
 #include "Tutorial/TutorialMode.h"
 #if defined _XBOX || defined _WINDOWS64
 #include "../Minecraft.Client/Platform/Xbox/XML/ATGXmlParser.h"
