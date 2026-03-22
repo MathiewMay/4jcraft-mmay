@@ -532,7 +532,7 @@ File Minecraft::getWorkingDirectory(const std::wstring& applicationName) {
 
 LevelStorageSource* Minecraft::getLevelSource() { return levelSource; }
 
-void Minecraft::setScreen(Screen* screen) {
+void Minecraft::setScreen(Screen* m_screen) {
     if (dynamic_cast<ErrorScreen*>(this->screen) != NULL) return;
 
     if (this->screen != NULL) {
@@ -546,12 +546,12 @@ void Minecraft::setScreen(Screen* screen) {
     }
     stats->forceSave();*/
 
-    if (screen == NULL && level == NULL) {
-        screen = new TitleScreen();
+    if (m_screen == NULL && level == NULL) {
+        m_screen = new TitleScreen();
     } else if (player != NULL && !ui.GetMenuDisplayed(player->GetXboxPad()) &&
                player->getHealth() <= 0) {
 #ifdef ENABLE_JAVA_GUIS
-        screen = new DeathScreen();
+        m_screen = new DeathScreen();
 #else
         // 4J Stu - If we exit from the death screen then we are saved as being
         // dead. In the Java game when you load the game you are still dead, but
@@ -565,13 +565,13 @@ void Minecraft::setScreen(Screen* screen) {
 #endif
     }
 
-    if (dynamic_cast<TitleScreen*>(screen) != NULL) {
+    if (dynamic_cast<TitleScreen*>(m_screen) != NULL) {
         options->renderDebug = false;
         gui->clearMessages();
     }
 
-    this->screen = screen;
-    if (screen != NULL) {
+    this->screen = m_screen;
+    if (m_screen != NULL) {
         //        releaseMouse();	// 4J - removed
         ScreenSizeCalculator ssc(options, width, height);
         int screenWidth = ssc.getWidth();
@@ -630,13 +630,13 @@ void Minecraft::destroy() {
     setLevel(NULL);
     //    } catch (Throwable e) {
     //    }
-
-    if (screen == NULL && level == NULL) {
-        screen = new TitleScreen();
+    Screen* m_screen = screen;
+    if (m_screen == NULL && level == NULL) {
+        m_screen = new TitleScreen();
     } else if (player != NULL && !ui.GetMenuDisplayed(player->GetXboxPad()) &&
                player->getHealth() <= 0) {
 #ifdef ENABLE_JAVA_GUIS
-        screen = new DeathScreen();
+        m_screen = new DeathScreen();
 #else
         // 4J Stu - If we exit from the death screen then we are saved as being
         // dead. In the Java game when you load the game you are still dead, but
@@ -650,13 +650,13 @@ void Minecraft::destroy() {
 #endif
     }
 
-    if (screen != NULL && dynamic_cast<TitleScreen*>(screen) != NULL) {
+    if (m_screen != NULL && dynamic_cast<TitleScreen*>(m_screen) != NULL) {
         options->renderDebug = false;
         gui->clearMessages();
     }
 
-    this->screen = screen;
-    if (screen != NULL) {
+    this->screen = m_screen;
+    if (m_screen != NULL) {
         //        releaseMouse();	// 4J - removed
         ScreenSizeCalculator ssc(options, width, height);
         int screenWidth = ssc.getWidth();
@@ -670,7 +670,7 @@ void Minecraft::destroy() {
     // 4J-PB - if a screen has been set, go into menu mode
     // it's possible that player doesn't exist here yet
 #ifdef ENABLE_JAVA_GUIS
-    if (screen != NULL) {
+    if (m_screen != NULL) {
         if (player && player->GetXboxPad() != -1) {
             InputManager.SetMenuDisplayed(player->GetXboxPad(), true);
         }
@@ -2079,11 +2079,10 @@ void Minecraft::run_middle() {
                 // If there's an unoccupied quadrant, then clear that to black
                 if (unoccupiedQuadrant > -1) {
                     // render a logo
-                    RenderManager.StateSetViewport((
-                        C4JRender::
-                            eViewportType)(C4JRender::
-                                               VIEWPORT_TYPE_QUADRANT_TOP_LEFT +
-                                           unoccupiedQuadrant));
+                    RenderManager.StateSetViewport(
+                        static_cast<C4JRender::eViewportType>(
+                            C4JRender::VIEWPORT_TYPE_QUADRANT_TOP_LEFT +
+                            unoccupiedQuadrant));
                     glClearColor(0, 0, 0, 0);
                     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -2326,6 +2325,7 @@ void Minecraft::renderFpsMeter(__int64 tickTime) {
 }
 
 void Minecraft::stop() {
+    app.DebugPrintf("Minecraft::stop() SET running = false;\n");
     running = false;
     // keepPolling = false;
 }
@@ -3686,10 +3686,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures) {
                     Minecraft::GetInstance()->player);
             ui.PlayUISFX(eSFX_Press);
 #ifdef ENABLE_JAVA_GUIS
-            if (gameMode->hasInfiniteItems())
-                setScreen(new CreativeInventoryScreen(player));
-            else
-                setScreen(new InventoryScreen(player));
+            setScreen(new InventoryScreen(player));
 #else
             app.LoadInventoryMenu(iPad, player);
 #endif
@@ -3709,6 +3706,10 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures) {
                 // Creative mode
 
                 ui.PlayUISFX(eSFX_Press);
+#ifdef ENABLE_JAVA_GUIS
+                setScreen(new CreativeInventoryScreen(player));
+            }
+#else
                 app.LoadCreativeMenu(iPad, player);
             }
             // 4J-PB - Microsoft request that we use the 3x3 crafting if someone
@@ -3728,6 +3729,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures) {
                 ui.PlayUISFX(eSFX_Press);
                 app.LoadCrafting2x2Menu(iPad, player);
             }
+#endif
         }
 
         if ((player->ullButtonsPressed & (1LL << MINECRAFT_ACTION_PAUSEMENU))

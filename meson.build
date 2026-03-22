@@ -1,6 +1,6 @@
 project('4jcraft-chucklegrounds', ['cpp', 'c'],
   version : '0.1.0',
-  meson_version: '>= 1.1',
+  meson_version: '>= 1.7',
   default_options : [
     'cpp_std=c++23',
     'warning_level=0',
@@ -33,14 +33,15 @@ glu_dep    = dependency('glu')
 sdl2_dep   = dependency('sdl2') # Yes.. i know sdl3 is out, but there's not point upgrading right now except when
                                 # someone is gonna ask me "Hey juicey can you make it SDL3?" and i'd be like fuck you and still do it.
 thread_dep = dependency('threads')
+miniaudio_dep = dependency('miniaudio')
+stb = subproject('stb').get_variable('stb_inc')
 
 lua_names = ['lua-5.4','lua5.4','lua54','lua'] # throw dem bitches in a list
 lua_dep = dependency(
-  lua_names,
-  required: true,
-  not_found_message: 'Could not find lua, make sure it is installed, (lua 5.4)'
+    lua_names,
+    required: true,
+    not_found_message: 'Could not find lua, make sure it is installed, (lua 5.4)'
 )
-
 # compile flags (chagne ts juicey)
 global_cpp_args = [
   '-fpermissive',
