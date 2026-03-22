@@ -7,7 +7,9 @@
 // #include <system_service.h>
 #include <codecvt>
 
-#include "Registry/ItemRegistry.h"
+#include "Registry/Item/ItemRegistry.h"
+#include "Registry/IDs.h"
+
 #if defined(__linux__) && defined(__GLIBC__)
 #include <signal.h>
 #include <execinfo.h>
@@ -895,6 +897,7 @@ return -1;
     loader.refreshClientScripts();
     loader.executeClientScripts("main",true);
     ItemRegistry::changeLang(*app.m_stringTable);
+    IDMapping::staticCtor();
 
     // Minecraft::main () used to call Minecraft::Start, but this takes ~2.5
     // seconds, so now running this in another thread so we can do some basic
