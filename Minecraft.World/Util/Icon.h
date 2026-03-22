@@ -10,6 +10,7 @@ public:
 
     /* Cactus ModLoader */
     static const int TYPE_MOD_ITEM = 2;
+    static const int TYPE_MOD_TILE = 3;
 
 #ifdef __PSVITA__
     // AP - alpha cut out is expensive on vita so we mark which icons require it

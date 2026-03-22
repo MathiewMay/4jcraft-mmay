@@ -37,6 +37,74 @@ PreStitchedTextureMap::PreStitchedTextureMap(int type, const std::wstring& name,
     missingPosition =
         (StitchedTexture*)(new SimpleIcon(NAME_MISSING_TEXTURE, 0, 0, 1, 1));
 }
+/* Cactus ModLoader [IMPL] */
+StitchedTexture *PreStitchedTextureMap::registerIconFromPixels(const std::wstring &name, const std::vector<int> &pixels, int w, int h) {
+    for (auto& texture : pendingModTextures) {
+        if (texture.first == name) return texture.second;
+    }
+
+    SimpleIcon* icon = new SimpleIcon(name, 0.0f, 0.0f, 0.0f, 0.0f);
+    pendingModTextures.push_back({ name, icon });
+    return icon;
+}
+
+void PreStitchedTextureMap::expandWithModTextures(const std::vector<std::pair<std::wstring, std::vector<int>>>& modTextures, int iconW, int iconH) {
+    if (modTextures.empty() || !stitchResult) return;
+
+    int terrainW = stitchResult->getWidth();
+    int terrainH = stitchResult->getHeight();
+    int iconsPerRow = terrainW / iconW;
+    int newH = terrainH + (((int)modTextures.size() + iconsPerRow - 1) / iconsPerRow) * iconH;
+
+    std::vector<uint8_t> terrainPixels(terrainW * terrainH * 4);
+    glBindTexture(GL_TEXTURE_2D, stitchResult->getGlId());
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrainPixels.data());
+
+    std::vector<uint8_t> combined(terrainW * newH * 4, 0);
+    memcpy(combined.data(), terrainPixels.data(), terrainW * terrainH * 4);
+
+    std::unordered_set<std::wstring> modNames;
+    for (const auto& m : modTextures) modNames.insert(m.first);
+
+    int slot = 0;
+    for (const auto& kv : modTextures) {
+        const std::wstring& name = kv.first;
+        const auto& src = kv.second;
+        int destX = (slot % iconsPerRow) * iconW;
+        int destY = terrainH + (slot / iconsPerRow) * iconH;
+
+        for (int py = 0; py < iconH; ++py)
+            for (int px = 0; px < iconW; ++px) {
+                int argb = src[py * iconW + px];
+                uint8_t r = (argb >> 16) & 0xff, g = (argb >> 8) & 0xff, b = argb & 0xff, a = (argb >> 24) & 0xff;
+                if (a == 0) a = 255;
+                int dstIdx = ((destY + py) * terrainW + (destX + px)) * 4;
+                combined[dstIdx] = r; combined[dstIdx+1] = g; combined[dstIdx+2] = b; combined[dstIdx+3] = a;
+            }
+
+        auto it = texturesByName.find(name);
+        if (it != texturesByName.end())
+            if (auto* st = dynamic_cast<StitchedTexture*>(it->second))
+                st->initUVs((float)destX/terrainW, (float)destY/newH,(float)(destX+iconW)/terrainW, (float)(destY+iconH)/newH);
+        ++slot;
+    }
+
+    float vScale = (float)terrainH / newH;
+    for (auto& kv : texturesByName)
+        if (!modNames.count(kv.first))
+            if (auto* st = dynamic_cast<StitchedTexture*>(kv.second))
+                st->initUVs(st->getU0(), st->getV0()*vScale, st->getU1(), st->getV1()*vScale);
+
+    glBindTexture(GL_TEXTURE_2D, stitchResult->getGlId());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, terrainW, newH, 0, GL_RGBA, GL_UNSIGNED_BYTE, combined.data());
+
+    std::vector<uint8_t> dummy(terrainW * newH * 4);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, dummy.data());
+}
 
 void PreStitchedTextureMap::stitch() {
     // Animated StitchedTextures store a vector of textures for each frame of
@@ -49,6 +117,14 @@ void PreStitchedTextureMap::stitch() {
     }
 
     loadUVs();
+
+    for (auto& texture : pendingModTextures) {
+        if (texturesByName.find(texture.first) == texturesByName.end()) {
+            texturesByName.insert(stringIconMap::value_type(
+                texture.first, texture.second));
+        }
+    }
+    pendingModTextures.clear();
 
     if (iconType == Icon::TYPE_TERRAIN) {
         // for (Tile tile : Tile.tiles)

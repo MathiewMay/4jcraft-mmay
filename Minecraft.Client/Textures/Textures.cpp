@@ -1137,9 +1137,11 @@ void Textures::reloadAll() {
 
 void Textures::stitch() {
     /* Cactus ModLoader  HOOK */
+    ModTextureAtlas::getInstance()->registerPendingTexturesIntoTerrainAtlas(terrain);
     ModTextureAtlas::getInstance()->build();
     terrain->stitch();
     items->stitch();
+    ModTextureAtlas::getInstance()->finalizeIntoTerrainMap(terrain);
 }
 
 Icon* Textures::getMissingIcon(int type) {

@@ -4,6 +4,8 @@
 #include "../Util/Definitions.h"
 #include "../Util/SoundTypes.h"
 #include <cstdint>
+
+#include "../Util/Icon.h"
 #if !defined(_WIN32)
 #include <pthread.h>
 #endif
@@ -516,6 +518,11 @@ private:
 
 protected:
     Icon* icon;
+
+/* Cactus ModLoader */
+public:
+    virtual int getIconType() const { return Icon::TYPE_TERRAIN; }
+    void setModIcon(Icon* i) { icon = i; }
 
 public: //CML R: why was this protected before????
     void _init(int id, Material* material, bool isSolidRender);

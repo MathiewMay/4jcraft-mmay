@@ -2,6 +2,7 @@
 
 #include "../../../Minecraft.World/Util/IconRegister.h"
 
+class SimpleIcon;
 class Icon;
 class StitchedTexture;
 class Texture;
@@ -11,6 +12,10 @@ class BufferedImage;
 class PreStitchedTextureMap : public IconRegister {
 public:
     static const std::wstring NAME_MISSING_TEXTURE;
+    /* Cactus ModLoader */
+    StitchedTexture* registerIconFromPixels(const std::wstring& name, const std::vector<int>& pixels, int w, int h);
+    void expandWithModTextures(const std::vector<std::pair<std::wstring, std::vector<int>>> &modTextures, int iconW,int iconH);
+    std::vector<std::pair<std::wstring, SimpleIcon*>> pendingModTextures;
 
 private:
     const int iconType;

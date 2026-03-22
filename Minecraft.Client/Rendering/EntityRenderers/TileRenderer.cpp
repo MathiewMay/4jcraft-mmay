@@ -13,6 +13,9 @@
 #include "EntityTileRenderer.h"
 #include "../../GameState/Options.h"
 
+/* Cactus ModLoader Includes */
+#include "Client/Rendering/ModTextureAtlas.h"
+
 bool TileRenderer::fancy = true;
 
 const float smallUV = (1.0f / 16.0f);
@@ -7065,6 +7068,13 @@ void TileRenderer::renderCube(Tile* tile, float alpha) {
 
 void TileRenderer::renderTile(Tile* tile, int data, float brightness,
                               float fAlpha, bool useCompiled) {
+
+    /* Cactus ModLoader [HOOK-START] */
+    if (tile->getIconType() == Icon::TYPE_MOD_TILE && ModTextureAtlas::getInstance()) {
+        glBindTexture(GL_TEXTURE_2D, ModTextureAtlas::getInstance()->getAtlasGlId());
+    }
+    /* Cactus ModLoader [HOOK-STOP] */
+
     Tesselator* t = Tesselator::getInstance();
 
     bool isGrass = tile->id == Tile::grass_Id;
