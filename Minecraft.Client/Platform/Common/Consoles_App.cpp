@@ -4120,8 +4120,6 @@ void CMinecraftApp::loadStringTable()
 		byteArray locFile = m_mediaArchive->getFile(localisationFile);
 		m_stringTable = new StringTable(locFile.data, locFile.length);
 
-		ItemRegistry::changeLang(*m_stringTable);
-
 		delete[] locFile.data;
 	}
 	else
