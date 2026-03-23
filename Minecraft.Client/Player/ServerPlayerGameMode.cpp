@@ -218,7 +218,7 @@ bool ServerPlayerGameMode::destroyBlock(int x, int y, int z) {
     int data = level->getData(x, y, z);
 
     /* CactusModLoader [IMPL-START] */
-    PlayerBlockBreakEvent event(player.get(), x, y, z, t);
+    PlayerBlockBreakEvent event(player.get(), x, y, z, t, data);
     EventBus::Get().fire(event);
 
     if (event.isCancelled()) {

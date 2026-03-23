@@ -17,6 +17,7 @@
 
 /* Cactus ModLoader Includes */
 #include "Cactus.ModLoader/Loader.h"
+#include "Cactus.ModLoader/Registry/IDs.h"
 
 static void sigsegv_handler(int sig) {
     const char msg[] = "\n=== SIGNAL CAUGHT: ";
@@ -897,7 +898,7 @@ return -1;
     loader.refreshClientScripts();
     loader.executeClientScripts("main",true);
     ItemRegistry::changeLang(*app.m_stringTable);
-    IDMapping::staticCtor();
+    IDMapping::get()->init();
 
     // Minecraft::main () used to call Minecraft::Start, but this takes ~2.5
     // seconds, so now running this in another thread so we can do some basic
