@@ -11,19 +11,8 @@ project('4jcraft-chucklegrounds', ['cpp', 'c'],
   ],
 )
 
-fs = import('fs')
-
-if fs.is_dir('/usr/include/lua5.4')
-  message('Falling back to manual lua project argument')
-  add_project_arguments('-I/usr/include/lua5.4', language: ['c', 'cpp'])
-endif
-
 pymod = import('python')
 python = pymod.find_installation('python3', required: true)
-
-if get_option('copy_example')
-  run_command(python,'copy.py')
-endif
 
 cc = meson.get_compiler('cpp')
 
@@ -36,12 +25,6 @@ thread_dep = dependency('threads')
 miniaudio_dep = dependency('miniaudio')
 stb = subproject('stb').get_variable('stb_inc')
 
-lua_names = ['lua-5.4','lua5.4','lua54','lua'] # throw dem bitches in a list
-lua_dep = dependency(
-    lua_names,
-    required: true,
-    not_found_message: 'Could not find lua, make sure it is installed, (lua 5.4)'
-)
 # compile flags (chagne ts juicey)
 global_cpp_args = [
   '-fpermissive',
@@ -72,7 +55,7 @@ input_dep = dependency('4j-input', fallback: ['4jlibs', 'input_dep'])
 profile_dep = dependency('4j-profile', fallback: ['4jlibs', 'profile_dep'])
 storage_dep = dependency('4j-storage', fallback: ['4jlibs', 'storage_dep'])
 
-subdir('Cactus.ModLoader')
+subdir('Cactus.ModLoader') # Cactus ModLoader
 subdir('Minecraft.Assets')
 subdir('Minecraft.World')
 subdir('Minecraft.Client')

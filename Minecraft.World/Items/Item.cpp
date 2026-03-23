@@ -16,13 +16,13 @@
 #include "HangingEntityItem.h"
 
 /* Cactus ModLoader Includes */
-#include "../Cactus.ModLoader/Server/Events/Player/PlayerJoinEvent.h"
-#include "../Cactus.ModLoader/Common/EventSystem/EventBus.h"
-#include "../Cactus.ModLoader/Server/Events/Item/ItemInteractEvent.h"
-#include "../Cactus.ModLoader/Client/Rendering/ModTextureAtlas.h"
-#include "../Minecraft.Client/Textures/Stitching/StitchedTexture.h"
-#include "../../Minecraft.Client/Level/ServerLevel.h"
-#include "../Minecraft.Client/Player/ServerPlayer.h"
+#include "Cactus.ModLoader/Server/Events/Player/PlayerJoinEvent.h"
+#include "Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "Cactus.ModLoader/Server/Events/Item/ItemInteractEvent.h"
+#include "Cactus.ModLoader/Client/Rendering/ModTextureAtlas.h"
+#include "Minecraft.Client/Textures/Stitching/StitchedTexture.h"
+#include "Minecraft.Client/Level/ServerLevel.h"
+#include "Minecraft.Client/Player/ServerPlayer.h"
 
 class ServerPlayer;
 typedef Item::Tier _Tier;

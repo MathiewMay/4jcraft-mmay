@@ -57,7 +57,7 @@ client_dependencies = [
     thread_dep,
     thread_dep,
     dependency('zlib'),
-    cml_dep,
+    cml_dep, # Cactus ModLoader
     miniaudio_dep
 ]
 

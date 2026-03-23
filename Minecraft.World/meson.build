@@ -33,6 +33,7 @@ lib_world = static_library('Minecraft.World',
     input_dep,
     profile_dep,
     storage_dep,
+    cml_inc_dep # Cactus ModLoader
   ],
   cpp_args : global_cpp_args + global_cpp_defs + [
     '-include', 'Platform/stdafx.h',

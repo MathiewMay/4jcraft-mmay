@@ -14,7 +14,7 @@
 #include "../../GameState/Options.h"
 
 /* Cactus ModLoader Includes */
-#include "Client/Rendering/ModTextureAtlas.h"
+#include "Cactus.ModLoader/Client/Rendering/ModTextureAtlas.h"
 
 bool TileRenderer::fancy = true;
 

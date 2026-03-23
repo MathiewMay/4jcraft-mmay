@@ -1,7 +1,7 @@
 #pragma once
 
 /* Cactus ModLoader Includes */
-#include "../Cactus.ModLoader/Loader.h"
+#include "Cactus.ModLoader/Loader.h"
 
 class Timer;
 class MultiPlayerLevel;

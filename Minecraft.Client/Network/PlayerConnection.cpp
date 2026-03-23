@@ -33,12 +33,12 @@
 #include "../GameState/Options.h"
 
 /* Cactus ModLoader Includes */
-#include "Server/Events/Player/PlayerBlockBreakEvent.h"
-#include "Server/Events/Player/PlayerBlockPlaceEvent.h"
-#include "Common/EventSystem/EventBus.h"
-#include "Common/CactusUtils.h"
-#include "Server/Events/Player/PlayerFlightStartedEvent.h"
-#include "Server/Events/Player/PlayerFlightEndedEvent.h"
+#include "Cactus.ModLoader/Server/Events/Player/PlayerBlockBreakEvent.h"
+#include "Cactus.ModLoader/Server/Events/Player/PlayerBlockPlaceEvent.h"
+#include "Cactus.ModLoader/Common/EventSystem/EventBus.h"
+#include "Cactus.ModLoader/Common/CactusUtils.h"
+#include "Cactus.ModLoader/Server/Events/Player/PlayerFlightStartedEvent.h"
+#include "Cactus.ModLoader/Server/Events/Player/PlayerFlightEndedEvent.h"
 
 Random PlayerConnection::random;
 

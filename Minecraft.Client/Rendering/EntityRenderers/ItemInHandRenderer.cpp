@@ -18,8 +18,8 @@
 #include "../../../Minecraft.World/Headers/net.minecraft.world.h"
 
 /* Cactus ModLoader Includes */
-#include "Client/Rendering/ModTextureAtlas.h"
-#include "Textures/Stitching/StitchedTexture.h"
+#include "Cactus.ModLoader/Client/Rendering/ModTextureAtlas.h"
+
 class StitchedTexture;
 
 int ItemInHandRenderer::list = -1;
